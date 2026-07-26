@@ -1,0 +1,149 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  PantryVision - Save Product Lambda function with API Gateway endpoint.
+  Defines the Lambda function, IAM execution role, and REST API for persisting
+  confirmed product data to the DynamoDB inventory table.
+
+Parameters:
+  TableName:
+    Type: String
+    Default: pantryvision-products
+    Description: Name of the DynamoDB table for product inventory storage.
+
+  StageName:
+    Type: String
+    Default: prod
+    Description: API Gateway deployment stage name.
+
+Resources:
+  # IAM Execution Role - minimum required permissions
+  SaveProductExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: save-product-execution-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        # Basic Lambda execution (CloudWatch Logs)
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: dynamodb-put-item-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:PutItem
+                Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TableName}"
+
+  # Lambda Function
+  SaveProductFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: save-product
+      Runtime: python3.12
+      Handler: handler.lambda_handler
+      MemorySize: 128
+      Timeout: 10
+      Role: !GetAtt SaveProductExecutionRole.Arn
+      Code:
+        S3Bucket: !Sub "pantryvision-deployment-${AWS::AccountId}"
+        S3Key: backend/save-product.zip
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TableName
+
+  # API Gateway REST API
+  SaveApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: pantryvision-save-api
+      Description: API for PantryVision save product to inventory
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  # API Gateway Resource: /save-product
+  SaveProductResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref SaveApi
+      ParentId: !GetAtt SaveApi.RootResourceId
+      PathPart: save-product
+
+  # API Gateway Method: POST /save-product (TEMPORARY: auth disabled for testing)
+  SaveProductPostMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref SaveApi
+      ResourceId: !Ref SaveProductResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SaveProductFunction.Arn}/invocations"
+
+  # CORS: OPTIONS method for preflight requests
+  SaveProductOptionsMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref SaveApi
+      ResourceId: !Ref SaveProductResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ""
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+
+  # Lambda permission for API Gateway invocation
+  SaveFunctionApiGatewayPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref SaveProductFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${SaveApi}/*/POST/save-product"
+
+  # API Gateway Deployment
+  ApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - SaveProductPostMethod
+      - SaveProductOptionsMethod
+    Properties:
+      RestApiId: !Ref SaveApi
+      StageName: !Ref StageName
+
+Outputs:
+  SaveApiEndpoint:
+    Description: API Gateway endpoint URL for the save-product resource
+    Value: !Sub "https://${SaveApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/save-product"
+
+  LambdaFunctionArn:
+    Description: ARN of the save-product Lambda function
+    Value: !GetAtt SaveProductFunction.Arn
+
+  ExecutionRoleArn:
+    Description: ARN of the Lambda execution role
+    Value: !GetAtt SaveProductExecutionRole.Arn

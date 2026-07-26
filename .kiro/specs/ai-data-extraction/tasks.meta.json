@@ -1,0 +1,237 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Create handler with request validation and response helpers": [
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784845555185
+      },
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784845566012
+      },
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784846011569
+      }
+    ],
+    "1.2 Implement S3 image retrieval": [
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784845556354
+      },
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784846016686
+      },
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784846241072
+      }
+    ],
+    "1.3 Implement Bedrock invocation via Converse API": [
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784845556465
+      },
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784846017594
+      },
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784846241997
+      }
+    ],
+    "1.4 Implement response parsing and date normalization": [
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784845556546
+      },
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784846247296
+      },
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784846561172
+      }
+    ],
+    "1.5 Wire handler orchestration and error handling": [
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784845556635
+      },
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784846566932
+      },
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784846785905
+      }
+    ],
+    "2.1 Create lambda-extract.yaml CloudFormation template": [
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784845556720
+      },
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784845567112
+      },
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784846012457
+      }
+    ],
+    "3. Checkpoint - Backend and infra complete": [
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784845556794
+      },
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784846926336
+      },
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784846930525
+      }
+    ],
+    "4.1 Create types and extraction service": [
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784845556909
+      },
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784846567832
+      },
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784846786765
+      }
+    ],
+    "4.2 Implement ReviewForm component": [
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784845556972
+      },
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784846791206
+      },
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784846913648
+      }
+    ],
+    "5.1 Connect PhotoUploader to extraction and ReviewForm in App.tsx": [
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784845557045
+      },
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784846939215
+      },
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784847292092
+      }
+    ],
+    "5.2 Add loading state and error handling UI": [
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784845557111
+      },
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784847296491
+      },
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784847423979
+      }
+    ],
+    "6. Final checkpoint - All components integrated": [
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784845557171
+      },
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784847428423
+      },
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784847432923
+      }
+    ],
+    "2. Infrastructure: CloudFormation template": [
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784846012510
+      }
+    ],
+    "1. Backend Lambda: extract-product-data": [
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784846785988
+      }
+    ],
+    "4. Frontend: ReviewForm component and extraction service": [
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784846913702
+      }
+    ],
+    "5. Integration: Wire upload → extract → review flow": [
+      {
+        "executionId": "6687b335-db33-415b-b3b4-36d40e0c8b30",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1784847424034
+      }
+    ]
+  }
+}

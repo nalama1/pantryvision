@@ -1,0 +1,142 @@
+/* ==========================================================================
+   ReviewForm Component Styles — Clean, friendly, confidence-coded
+   ========================================================================== */
+
+/* Form Card Wrapper */
+.review-form {
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-8);
+  animation: fadeIn 0.4s ease forwards;
+}
+
+/* Extraction Error Banner */
+.review-form__extraction-error {
+  background: var(--color-warning-bg);
+  border-left: 4px solid var(--color-warning);
+  padding: var(--space-4) var(--space-6);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-8);
+  color: var(--color-gray-700);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.review-form__extraction-error::before {
+  content: '💡';
+  font-size: 1.2em;
+}
+
+/* Field Group */
+.review-form__field {
+  margin-bottom: var(--space-6);
+}
+
+.review-form__field label {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-700);
+  margin-bottom: var(--space-2);
+}
+
+/* Input Styling */
+.review-form__input {
+  display: block;
+  width: 100%;
+  padding: var(--space-4) var(--space-5);
+  font-size: var(--font-size-base);
+  font-family: var(--font-family);
+  border: 2px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+  min-height: 48px;
+}
+
+.review-form__input:hover {
+  border-color: var(--color-gray-300);
+}
+
+.review-form__input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+.review-form__input--low-confidence {
+  border-color: var(--color-warning);
+  background: var(--color-warning-bg);
+}
+
+.review-form__input--low-confidence:focus {
+  border-color: var(--color-warning);
+  box-shadow: 0 0 0 3px var(--color-warning-bg);
+}
+
+/* Confidence Badges */
+.review-form__confidence {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  margin-top: var(--space-2);
+  gap: var(--space-1);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.review-form__confidence--high {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.review-form__confidence--medium {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+.review-form__confidence--low {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+}
+
+/* Validation Error */
+.review-form__error {
+  display: block;
+  color: var(--color-error);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  margin-top: var(--space-2);
+}
+
+/* Action Buttons */
+.review-form__actions {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: flex-end;
+  margin-top: var(--space-10);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-gray-200);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .review-form {
+    padding: var(--space-6);
+  }
+
+  .review-form__actions {
+    flex-direction: column;
+  }
+
+  .review-form__actions .btn {
+    width: 100%;
+  }
+}

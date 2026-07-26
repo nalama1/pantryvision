@@ -1,0 +1,158 @@
+/* ==========================================================================
+   PhotoUploader Component Styles — Friendly, modern upload experience
+   ========================================================================== */
+
+/* Upload Zone — Idle State */
+.photo-uploader__dropzone {
+  border: 2px dashed var(--color-gray-300);
+  border-radius: var(--radius-xl);
+  padding: var(--space-16) var(--space-8);
+  text-align: center;
+  background: var(--color-white);
+  transition: all var(--transition-base);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+
+.photo-uploader__dropzone:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* Drag Over State */
+.photo-uploader__dropzone--dragover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+  box-shadow: var(--shadow-lg);
+  transform: scale(1.01);
+}
+
+/* Upload Icon */
+.photo-uploader__icon {
+  font-size: 4rem;
+  margin-bottom: var(--space-4);
+  animation: pulse 3s ease-in-out infinite;
+}
+
+/* Instruction Text */
+.photo-uploader__text {
+  color: var(--color-gray-500);
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--space-8);
+}
+
+/* Action Buttons Container */
+.photo-uploader__actions {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Preview State */
+.photo-uploader__preview {
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-8);
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.photo-uploader__preview-image {
+  min-width: 200px;
+  min-height: 200px;
+  max-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: var(--radius-lg);
+  margin: 0 auto var(--space-6);
+  display: block;
+}
+
+.photo-uploader__preview-actions {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: center;
+}
+
+/* Progress Bar */
+.photo-uploader__progress {
+  margin: var(--space-6) 0;
+  position: relative;
+}
+
+.photo-uploader__progress-bar {
+  height: 10px;
+  background: var(--color-gray-100);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.photo-uploader__progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+}
+
+.photo-uploader__progress-text {
+  display: block;
+  text-align: center;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-500);
+  margin-top: var(--space-3);
+}
+
+/* Retry Info */
+.photo-uploader__retry-info {
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-warning);
+  margin: var(--space-3) 0;
+  font-weight: var(--font-weight-medium);
+}
+
+/* Success State */
+.photo-uploader__success {
+  text-align: center;
+  padding: var(--space-10);
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  border-top: 4px solid var(--color-success);
+  animation: fadeIn 0.4s ease forwards;
+}
+
+.photo-uploader__success p {
+  color: var(--color-success);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-xl);
+  margin-bottom: var(--space-6);
+}
+
+/* Error State */
+.photo-uploader__error {
+  text-align: center;
+  padding: var(--space-8);
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  border-top: 4px solid var(--color-error);
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.photo-uploader__error p {
+  color: var(--color-error);
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--space-6);
+}
+
+.photo-uploader__error-actions {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: center;
+  flex-wrap: wrap;
+}

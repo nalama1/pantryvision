@@ -1,0 +1,122 @@
+/* ==========================================================================
+   App Shell Layout — Header, Main Container, Section Spacing, States
+   ========================================================================== */
+
+/* Header */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--color-primary);
+  color: var(--color-white);
+  padding: var(--space-4) var(--space-6);
+  box-shadow: var(--shadow-lg);
+}
+
+.app-header__title {
+  margin: 0;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.app-header__title::before {
+  content: '🏠';
+  font-size: 1.2em;
+}
+
+/* Main Container */
+.app-main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-4);
+  min-height: calc(100vh - 60px);
+}
+
+/* Sections */
+.app-section {
+  margin-bottom: var(--space-8);
+  animation: fadeIn 0.4s ease forwards;
+}
+
+.app-section__title {
+  font-size: var(--font-size-2xl);
+  color: var(--color-gray-900);
+  margin-bottom: var(--space-6);
+  font-weight: var(--font-weight-bold);
+}
+
+/* Extracting State */
+.app-extracting {
+  text-align: center;
+  padding: var(--space-16) var(--space-4);
+  animation: fadeIn 0.4s ease forwards;
+}
+
+.app-extracting h2 {
+  color: var(--color-primary);
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--space-6);
+}
+
+.app-extracting__message {
+  color: var(--color-gray-500);
+  font-size: var(--font-size-lg);
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-8);
+}
+
+.app-extracting .spinner {
+  margin: 0 auto;
+  width: 48px;
+  height: 48px;
+}
+
+/* Done / Success State */
+.app-done {
+  text-align: center;
+  animation: fadeIn 0.4s ease forwards;
+}
+
+.app-done__card {
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-10);
+  border-top: 4px solid var(--color-success);
+}
+
+.app-done__icon {
+  font-size: 4rem;
+  margin-bottom: var(--space-4);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.app-done__message {
+  font-size: var(--font-size-lg);
+  color: var(--color-gray-700);
+  margin-bottom: var(--space-8);
+}
+
+.app-done__product-name {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+  .app-main {
+    padding: var(--space-12) var(--space-8);
+  }
+
+  .app-section {
+    margin-bottom: var(--space-12);
+  }
+
+  .app-header__title {
+    font-size: var(--font-size-2xl);
+  }
+}

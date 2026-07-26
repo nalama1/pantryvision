@@ -1,0 +1,169 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  PantryVision - Extract Product Data Lambda function with API Gateway endpoint.
+  Defines the Lambda function, IAM execution role, and REST API for AI-powered
+  product data extraction using Amazon Bedrock (Amazon Nova Pro).
+
+Parameters:
+  BucketName:
+    Type: String
+    Default: pantryvision-product-images
+    Description: Name of the S3 bucket for product image storage.
+
+  BedrockModelId:
+    Type: String
+    Default: amazon.nova-pro-v1:0
+    Description: Bedrock model identifier for product data extraction.
+
+  BedrockTimeout:
+    Type: String
+    Default: "30"
+    Description: Timeout in seconds for Bedrock invocation.
+
+  StageName:
+    Type: String
+    Default: prod
+    Description: API Gateway deployment stage name.
+
+Resources:
+  # IAM Execution Role - minimum required permissions
+  ExtractProductDataExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: extract-product-data-execution-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        # Basic Lambda execution (CloudWatch Logs)
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: s3-read-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                Resource: !Sub "arn:aws:s3:::${BucketName}/*"
+        - PolicyName: bedrock-converse-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - bedrock:Converse
+                Resource: !Sub "arn:aws:bedrock:${AWS::Region}::foundation-model/${BedrockModelId}"
+
+  # Lambda Function
+  ExtractProductDataFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: extract-product-data
+      Runtime: python3.12
+      Handler: handler.lambda_handler
+      MemorySize: 256
+      Timeout: 60
+      Role: !GetAtt ExtractProductDataExecutionRole.Arn
+      Code:
+        S3Bucket: !Sub "pantryvision-deployment-${AWS::AccountId}"
+        S3Key: backend/extract-product-data.zip
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref BucketName
+          BEDROCK_MODEL_ID: !Ref BedrockModelId
+          BEDROCK_TIMEOUT: !Ref BedrockTimeout
+
+  # API Gateway REST API
+  ExtractApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: pantryvision-extract-api
+      Description: API for PantryVision AI product data extraction
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  # API Gateway Resource: /extract-product-data
+  ExtractProductDataResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref ExtractApi
+      ParentId: !GetAtt ExtractApi.RootResourceId
+      PathPart: extract-product-data
+
+  # API Gateway Method: POST /extract-product-data (TEMPORARY: auth disabled for testing)
+  ExtractProductDataPostMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ExtractApi
+      ResourceId: !Ref ExtractProductDataResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ExtractProductDataFunction.Arn}/invocations"
+
+  # CORS: OPTIONS method for preflight requests
+  ExtractProductDataOptionsMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ExtractApi
+      ResourceId: !Ref ExtractProductDataResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ""
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+
+  # Lambda permission for API Gateway invocation
+  ExtractFunctionApiGatewayPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ExtractProductDataFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ExtractApi}/*/POST/extract-product-data"
+
+  # API Gateway Deployment
+  ApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - ExtractProductDataPostMethod
+      - ExtractProductDataOptionsMethod
+    Properties:
+      RestApiId: !Ref ExtractApi
+      StageName: !Ref StageName
+
+Outputs:
+  ExtractApiEndpoint:
+    Description: API Gateway endpoint URL for the extract-product-data resource
+    Value: !Sub "https://${ExtractApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/extract-product-data"
+
+  LambdaFunctionArn:
+    Description: ARN of the extract-product-data Lambda function
+    Value: !GetAtt ExtractProductDataFunction.Arn
+
+  ExecutionRoleArn:
+    Description: ARN of the Lambda execution role
+    Value: !GetAtt ExtractProductDataExecutionRole.Arn

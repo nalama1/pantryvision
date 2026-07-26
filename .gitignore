@@ -1,0 +1,55 @@
+# === Frontend (React/TypeScript/Vite) ===
+node_modules/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+.vite/
+
+# === Backend (Python) ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+*.egg-info/
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+package/
+
+# === AWS / Infrastructure ===
+.aws-sam/
+samconfig.toml
+cdk.out/
+cors.json
+
+# === Environment & Secrets ===
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.p12
+
+# === IDE ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# === OS ===
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# === Build artifacts ===
+*.zip
+*.log
+*.tmp
+*.temp

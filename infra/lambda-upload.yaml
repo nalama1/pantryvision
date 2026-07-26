@@ -1,0 +1,148 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  PantryVision - Upload Product Photo Lambda function with API Gateway endpoint.
+  Defines the Lambda function, IAM execution role, and REST API for presigned URL generation.
+
+Parameters:
+  BucketName:
+    Type: String
+    Default: pantryvision-product-images
+    Description: Name of the S3 bucket for product image uploads.
+
+  StageName:
+    Type: String
+    Default: prod
+    Description: API Gateway deployment stage name.
+
+Resources:
+  # IAM Execution Role - minimum required permissions
+  UploadProductPhotoExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: upload-product-photo-execution-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        # Basic Lambda execution (CloudWatch Logs)
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: s3-put-object-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:PutObject
+                Resource: !Sub "arn:aws:s3:::${BucketName}/*"
+
+  # Lambda Function
+  UploadProductPhotoFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: upload-product-photo
+      Runtime: python3.12
+      Handler: handler.lambda_handler
+      MemorySize: 128
+      Timeout: 10
+      Role: !GetAtt UploadProductPhotoExecutionRole.Arn
+      Code:
+        S3Bucket: !Sub "pantryvision-deployment-${AWS::AccountId}"
+        S3Key: backend/upload-product-photo.zip
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref BucketName
+
+  # API Gateway REST API
+  UploadApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: pantryvision-upload-api
+      Description: API for PantryVision presigned URL generation
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  # API Gateway Resource: /upload-url
+  UploadUrlResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref UploadApi
+      ParentId: !GetAtt UploadApi.RootResourceId
+      PathPart: upload-url
+
+  # API Gateway Method: POST /upload-url (TEMPORARY: auth disabled for testing)
+  UploadUrlPostMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref UploadApi
+      ResourceId: !Ref UploadUrlResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UploadProductPhotoFunction.Arn}/invocations"
+
+  # CORS: OPTIONS method for preflight requests
+  UploadUrlOptionsMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref UploadApi
+      ResourceId: !Ref UploadUrlResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ""
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+
+  # Lambda permission for API Gateway invocation
+  UploadFunctionApiGatewayPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref UploadProductPhotoFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${UploadApi}/*/POST/upload-url"
+
+  # API Gateway Deployment
+  ApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - UploadUrlPostMethod
+      - UploadUrlOptionsMethod
+    Properties:
+      RestApiId: !Ref UploadApi
+      StageName: !Ref StageName
+
+Outputs:
+  UploadApiEndpoint:
+    Description: API Gateway endpoint URL for the upload-url resource
+    Value: !Sub "https://${UploadApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/upload-url"
+
+  LambdaFunctionArn:
+    Description: ARN of the upload-product-photo Lambda function
+    Value: !GetAtt UploadProductPhotoFunction.Arn
+
+  ExecutionRoleArn:
+    Description: ARN of the Lambda execution role
+    Value: !GetAtt UploadProductPhotoExecutionRole.Arn

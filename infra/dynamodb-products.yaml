@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  PantryVision - DynamoDB Products Table for inventory storage.
+  Stores product records with on-demand billing and encryption at rest.
+
+Parameters:
+  TableName:
+    Type: String
+    Default: pantryvision-products
+    Description: Name of the DynamoDB table for product inventory.
+
+Resources:
+  ProductsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Ref TableName
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: productId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: productId
+          KeyType: HASH
+      SSESpecification:
+        SSEEnabled: true
+
+Outputs:
+  TableName:
+    Description: Name of the products DynamoDB table
+    Value: !Ref ProductsTable
+    Export:
+      Name: PantryVisionProductsTableName
+
+  TableArn:
+    Description: ARN of the products DynamoDB table
+    Value: !GetAtt ProductsTable.Arn
+    Export:
+      Name: PantryVisionProductsTableArn

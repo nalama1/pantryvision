@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  S3 bucket for storing product images uploaded by PantryVision users.
+  Access is private-only via presigned URLs; no public access is permitted.
+
+Resources:
+  ProductImagesBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: pantryvision-product-images
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - Content-Type
+            AllowedMethods:
+              - PUT
+            AllowedOrigins:
+              - "https://*.amplifyapp.com"
+              - "http://localhost:5173"
+            ExposedHeaders:
+              - ETag
+            MaxAge: 3600
+
+Outputs:
+  BucketName:
+    Description: Name of the product images S3 bucket
+    Value: !Ref ProductImagesBucket
+    Export:
+      Name: PantryVisionProductImagesBucketName
+
+  BucketArn:
+    Description: ARN of the product images S3 bucket
+    Value: !GetAtt ProductImagesBucket.Arn
+    Export:
+      Name: PantryVisionProductImagesBucketArn
