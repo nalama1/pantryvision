@@ -28,7 +28,7 @@ const ALLOWED_MIME_TYPES: ReadonlySet<string> = new Set([
 const MAX_FILE_SIZE_BYTES = 5_242_880; // 5 MB
 
 const MIN_RESOLUTION = 200;
-const MAX_RESOLUTION = 4096;
+const MAX_RESOLUTION = 8000; // Raised from 4096 to accommodate modern phone camera resolutions (e.g., 4160x3120); backend resizes to 1024px before Bedrock, so no cost impact.
 
 /**
  * Validates a file for upload eligibility.
@@ -86,7 +86,7 @@ export async function validateFile(file: File): Promise<ValidationResult> {
       valid: false,
       error: {
         code: 'INVALID_RESOLUTION',
-        message: `Your photo is too large (${width}×${height} pixels). Please use a photo no larger than 4096×4096 pixels, or try a lower camera resolution setting.`,
+        message: `Your photo is too large (${width}×${height} pixels). Please use a photo no larger than 8000×8000 pixels, or try a lower camera resolution setting.`,
       },
     };
   }
