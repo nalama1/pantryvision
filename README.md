@@ -96,13 +96,17 @@ pytest
 Infrastructure is managed as CloudFormation templates in `/infra`. Deploy in order:
 
 1. `infra/s3-bucket.yaml` — S3 bucket
-2. `infra/lambda-upload.yaml` — Upload Lambda + API Gateway
-3. `infra/lambda-extract.yaml` — Extraction Lambda + API Gateway
+2. `infra/dynamodb-products.yaml` — DynamoDB products table
+3. `infra/lambda-upload.yaml` — Upload Lambda + API Gateway
+4. `infra/lambda-extract.yaml` — Extraction Lambda + API Gateway
+5. `infra/lambda-save-product.yaml` — Save Product Lambda + API Gateway
 
 ```bash
 aws cloudformation deploy --template-file infra/s3-bucket.yaml --stack-name pantryvision-s3-bucket --region <AWS_REGION>
+aws cloudformation deploy --template-file infra/dynamodb-products.yaml --stack-name pantryvision-dynamodb --region <AWS_REGION>
 aws cloudformation deploy --template-file infra/lambda-upload.yaml --stack-name pantryvision-lambda-upload --capabilities CAPABILITY_NAMED_IAM --region <AWS_REGION>
 aws cloudformation deploy --template-file infra/lambda-extract.yaml --stack-name pantryvision-lambda-extract --capabilities CAPABILITY_NAMED_IAM --region <AWS_REGION>
+aws cloudformation deploy --template-file infra/lambda-save-product.yaml --stack-name pantryvision-lambda-save --capabilities CAPABILITY_NAMED_IAM --region <AWS_REGION>
 ```
 
 ### Environment Variables
@@ -112,6 +116,7 @@ aws cloudformation deploy --template-file infra/lambda-extract.yaml --stack-name
 ```
 VITE_API_ENDPOINT=<API_GATEWAY_UPLOAD_URL>
 VITE_EXTRACT_API_ENDPOINT=<API_GATEWAY_EXTRACT_URL>
+VITE_SAVE_API_ENDPOINT=<API_GATEWAY_SAVE_URL>
 ```
 
 #### Backend (set by CloudFormation)
@@ -121,6 +126,7 @@ VITE_EXTRACT_API_ENDPOINT=<API_GATEWAY_EXTRACT_URL>
 | `BUCKET_NAME` | S3 bucket for product images |
 | `BEDROCK_MODEL_ID` | Bedrock model identifier |
 | `BEDROCK_TIMEOUT` | Timeout in seconds for AI invocation |
+| `TABLE_NAME` | DynamoDB table for product inventory |
 
 ## Tech Stack
 
