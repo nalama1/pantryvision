@@ -66,19 +66,27 @@ export async function validateFile(file: File): Promise<ValidationResult> {
 
   // 3. Resolution check — requires loading the image to read dimensions
   const resolution = await getImageResolution(file);
+  const { width, height } = resolution;
 
-  if (
-    resolution.width < MIN_RESOLUTION ||
-    resolution.height < MIN_RESOLUTION ||
-    resolution.width > MAX_RESOLUTION ||
-    resolution.height > MAX_RESOLUTION
-  ) {
+  const isTooSmall = width < MIN_RESOLUTION || height < MIN_RESOLUTION;
+  const isTooLarge = width > MAX_RESOLUTION || height > MAX_RESOLUTION;
+
+  if (isTooSmall) {
     return {
       valid: false,
       error: {
         code: 'INVALID_RESOLUTION',
-        message:
-          'Image resolution must be between 200×200 and 4096×4096 pixels.',
+        message: `Your photo is too small (${width}×${height} pixels). Please use a photo of at least 200×200 pixels.`,
+      },
+    };
+  }
+
+  if (isTooLarge) {
+    return {
+      valid: false,
+      error: {
+        code: 'INVALID_RESOLUTION',
+        message: `Your photo is too large (${width}×${height} pixels). Please use a photo no larger than 4096×4096 pixels, or try a lower camera resolution setting.`,
       },
     };
   }
