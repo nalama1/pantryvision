@@ -254,6 +254,23 @@ Código Facilito in collaboration with AWS and Kiro AI.
 - 📱 Responsive web application deployed on AWS Amplify
 - 🎯 Created to help reduce household food waste by tracking product expiration dates
 
+### 🤖 About Kiro
+
+This project was built using [Kiro](https://kiro.dev/), an AI-powered
+development environment (IDE) that helped design, implement, and document
+PantryVision through a structured, spec-driven workflow.
+
+| Aspect | Description |
+|--------|--------------|
+| **What is Kiro** | An agentic AI IDE (built on VS Code) that pairs a developer with an AI agent to plan, write, and verify code — not just autocomplete it. |
+| **Core Workflow** | Spec-driven development: requirements → design → tasks → implementation, so features are planned and reviewed before code is written. |
+| **Vibe Mode** | Conversational, exploratory coding for quick iterations, prototyping, and small fixes without a formal spec. |
+| **Spec Mode** | Structured workflow that generates `requirements.md`, `design.md`, and `tasks.md` for a feature, keeping documentation and code in sync. |
+| **Steering Files** | Project-level context files (`.kiro/steering/`) that encode conventions, tech stack decisions, and product context so the agent stays consistent across sessions. |
+| **Agent Hooks** | Automations that trigger agent actions on events (file save, task completion, etc.), used to keep quality checks consistent. |
+| **Property-Based Testing** | Kiro encourages defining correctness properties and validating them with generative tests, not just example-based unit tests. |
+| **Used in PantryVision for** | Planning features (photo upload, AI extraction, inventory dashboard, expiration alerts), generating and refactoring both backend (Python) and frontend (React/TypeScript) code, writing tests, and maintaining this documentation. |
+
 This project was created as a hackathon MVP and represents a functional
 proof of concept. Future improvements may include authentication, push
 notifications, barcode scanning, and advanced inventory analytics.
