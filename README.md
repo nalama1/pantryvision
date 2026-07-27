@@ -9,6 +9,7 @@ A serverless web application for household inventory management. Upload a photo 
 - [🏗️ Architecture](#architecture)
 - [✨ Features](#features)
 - [📁 Project Structure](#project-structure)
+- [🗂️ Internal Documentation (.kiro/)](#internal-documentation)
 - [🚀 Getting Started](#getting-started)
 - [🛠️ Tech Stack](#tech-stack)
 - [🛠️ Built With](#built-with)
@@ -99,6 +100,39 @@ access — no login required).
 /backend    → Lambda functions (Python 3.12)
 /infra      → CloudFormation templates
 ```
+
+<p align="right"><a href="#top">⬆️ Back to top</a></p>
+
+<a id="internal-documentation"></a>
+## 🗂️ Internal Documentation (.kiro/)
+
+PantryVision was built using [Kiro](https://kiro.dev/)'s spec-driven workflow. Every feature went through a `requirements.md → design.md → tasks.md` cycle before implementation, and project-wide conventions are encoded as steering files so the AI agent stayed consistent across the whole build. This internal documentation lives in `.kiro/` and is part of the repo.
+
+```
+.kiro/
+├── specs/
+│   ├── upload-product-photo/       -- Photo capture, validation, presigned S3 upload
+│   ├── ai-data-extraction/         -- Amazon Bedrock (Nova Pro) extraction pipeline
+│   ├── save-product-inventory/     -- Save confirmed product data to DynamoDB
+│   ├── inventory-dashboard/        -- List, filter, and display saved products
+│   ├── frontend-ui-redesign/       -- Visual redesign, i18n (ES/EN), UX polish
+│   └── expiration-alerts/          -- Daily EventBridge + SES expiration email
+│       (each spec: requirements.md, design.md, tasks.md)
+│
+├── steering/
+│   ├── product.md              -- Product context, target audience, key objectives
+│   ├── tech.md                 -- Fixed tech stack & architecture rules (serverless-first, AI never blocks, no hardcoded secrets)
+│   ├── structure.md            -- Project layout and code conventions
+│   ├── aws.md                  -- Approved AWS services & cost optimization guidelines
+│   ├── security.md             -- Secrets management & sensitive data handling
+│   ├── best-practices.md       -- AWS Well-Architected best practices
+│   └── repository.md           -- Pre-commit checklist & repo exclusion rules
+│
+└── settings/
+    └── mcp.json                 -- MCP server config (AWS architecture diagram generation)
+```
+
+Six features, six specs — each documenting the acceptance criteria (EARS format), the technical design, and the task breakdown that was actually executed. This kept the AI agent's context consistent from the first upload flow all the way to the final UI redesign, without re-explaining the project's rules in every conversation.
 
 <p align="right"><a href="#top">⬆️ Back to top</a></p>
 
