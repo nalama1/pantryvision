@@ -30,13 +30,15 @@
   content: '🏠';
   font-size: 1.2em;
   line-height: 1;
+  width: 1.2em;
+  height: 1.2em;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   background: transparent;
   border: none;
   box-shadow: none;
-  vertical-align: middle;
+  transform: translateY(-0.05em); /* fine-tune: nudges the emoji glyph up slightly to visually center against the text baseline */
 }
 
 /* Main Container */

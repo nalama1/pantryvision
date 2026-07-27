@@ -231,3 +231,33 @@
   outline: 3px solid var(--color-accent);
   outline-offset: 2px;
 }
+
+/* Mobile: reduce vertical padding so content (icon, text, both buttons)
+   fits comfortably without the last button being clipped near the
+   viewport edge; stack buttons vertically for easier tapping. */
+@media (max-width: 480px) {
+  .photo-uploader__dropzone {
+    padding: var(--space-8) var(--space-4);
+  }
+
+  .photo-uploader__icon {
+    font-size: 3rem;
+    margin-bottom: var(--space-3);
+  }
+
+  .photo-uploader__text {
+    font-size: var(--font-size-base);
+    margin-bottom: var(--space-4);
+  }
+
+  .photo-uploader__actions {
+    flex-direction: column;
+    width: 100%;
+    gap: var(--space-3);
+  }
+
+  .photo-uploader__btn-camera,
+  .photo-uploader__btn-gallery {
+    width: 100%;
+  }
+}

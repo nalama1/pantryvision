@@ -20,6 +20,7 @@
   border-bottom: 3px solid transparent;
   border-radius: 0;
   cursor: pointer;
+  white-space: nowrap; /* never wrap tab label to a second line */
   transition: color var(--transition-base), border-color var(--transition-base);
 }
 
@@ -76,4 +77,30 @@
 .nav-bar__lang-btn:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
+}
+
+/* Mobile: tighter spacing so long labels (e.g. "Agregar producto") fit
+   on one line without wrapping and breaking the active underline. */
+@media (max-width: 480px) {
+  .nav-bar {
+    padding: var(--space-2) var(--space-3);
+    gap: var(--space-1);
+    overflow-x: auto; /* safety net: horizontal scroll instead of wrap/overlap if still too tight */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .nav-bar__tab {
+    padding: var(--space-2) var(--space-2);
+    font-size: var(--font-size-sm);
+    flex-shrink: 0;
+  }
+
+  .nav-bar__language-switcher {
+    flex-shrink: 0;
+  }
+
+  .nav-bar__lang-btn {
+    width: 28px;
+    height: 28px;
+  }
 }
