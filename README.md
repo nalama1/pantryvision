@@ -56,6 +56,8 @@ PantryVision is built entirely on AWS using a 100% serverless, pay-per-use archi
                                          └──────────┘
 ```
 
+![PantryVision Architecture Diagram](docs/architecture-diagram.png)
+
 Requests to API Gateway are signed with AWS Signature V4 using temporary
 credentials obtained from an Amazon Cognito Identity Pool (unauthenticated
 access — no login required).
