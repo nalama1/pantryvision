@@ -6,8 +6,6 @@ A serverless web application for household inventory management. Upload a photo 
 
 There is no record of what was purchased, when, and when it expires. This leads to waste from expired products and duplicate or late purchases.
 
-## Demo
-
 ## Architecture
 
 PantryVision is built entirely on AWS using a 100% serverless, pay-per-use architecture.
@@ -65,8 +63,7 @@ access — no login required).
 - **Manual Fallback** — If AI cannot read the data, the user can enter it manually
 - **Review & Confirm** — Editable form with confidence indicators before saving
 - **Inventory Dashboard** — View, filter (Expired / Expiring Soon / Good), and browse saved products with images
-- **Expiration Alerts** *(planned)* — Email notifications 7 days before products expire
-- **Low-Stock Alerts** *(planned)* — Notifications when inventory is running low
+- **Expiration Alerts** — Daily automated email (Amazon EventBridge + SES) listing products expiring within 7 days or already expired, with a clean HTML summary
 
 ## Project Structure
 
