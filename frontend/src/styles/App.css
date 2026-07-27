@@ -7,25 +7,36 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background: var(--color-primary);
-  color: var(--color-white);
+  background: linear-gradient(180deg, var(--color-primary-header-start) 0%, var(--color-primary-header-end) 100%);
+  color: var(--color-neon-blue);
   padding: var(--space-4) var(--space-6);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-md);
 }
 
 .app-header__title {
   margin: 0;
   font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: -0.02em;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-neon-blue);
+  text-shadow: 0 0 8px rgba(56, 189, 248, 0.45);
+  letter-spacing: -0.01em;
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  line-height: 1;
 }
 
 .app-header__title::before {
   content: '🏠';
   font-size: 1.2em;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  vertical-align: middle;
 }
 
 /* Main Container */
@@ -49,6 +60,21 @@
   font-weight: var(--font-weight-bold);
 }
 
+.app-section h2 {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-900);
+  letter-spacing: -0.01em;
+}
+
+.app-section__help-text {
+  color: #334155;
+  font-size: var(--font-size-xs);
+  font-style: italic;
+  font-weight: var(--font-weight-normal);
+  margin-top: var(--space-3);
+}
+
 /* Extracting State */
 .app-extracting {
   text-align: center;
@@ -62,11 +88,17 @@
   margin-bottom: var(--space-6);
 }
 
+@keyframes messageFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .app-extracting__message {
   color: var(--color-gray-500);
   font-size: var(--font-size-lg);
   margin-top: var(--space-6);
   margin-bottom: var(--space-8);
+  animation: messageFadeIn 0.4s ease forwards;
 }
 
 .app-extracting .spinner {

@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import './PhotoUploader.css';
 import { validateFile, type UploadError } from './validateFile';
 import { requestPresignedUrl, uploadToS3, UploadServiceError } from './uploadService';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 export type UploadState = 'idle' | 'previewing' | 'uploading' | 'success' | 'error';
 
@@ -24,6 +25,7 @@ function delay(ms: number): Promise<void> {
  * and automatic retry logic with exponential backoff.
  */
 export function PhotoUploader({ onUploadComplete, onError }: PhotoUploaderProps) {
+  const { t } = useLanguage();
   const [state, setState] = useState<UploadState>('idle');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -208,7 +210,7 @@ export function PhotoUploader({ onUploadComplete, onError }: PhotoUploaderProps)
               // Presign retry also failed — show final error
               const error: UploadError = {
                 code: 'PRESIGN_FAILED',
-                message: 'Upload could not be completed. The upload URL expired and renewal failed. Please try again.',
+                message: t('photoUploader.errorPresignFailed'),
               };
               setErrorInfo(error);
               setRetryCount(currentRetryCount);
@@ -222,7 +224,7 @@ export function PhotoUploader({ onUploadComplete, onError }: PhotoUploaderProps)
             // Timeout — do not auto-retry, show error with manual retry option
             const error: UploadError = {
               code: 'TIMEOUT',
-              message: 'Upload timed out. The file may be too large for your connection speed.',
+              message: t('photoUploader.errorTimeout'),
             };
             setErrorInfo(error);
             setRetryCount(currentRetryCount);
@@ -246,7 +248,7 @@ export function PhotoUploader({ onUploadComplete, onError }: PhotoUploaderProps)
             // Max retries exhausted — show final error
             const error: UploadError = {
               code: 'NETWORK_ERROR',
-              message: 'Upload failed after multiple attempts. Please check your connection and try again.',
+              message: t('photoUploader.errorNetworkExhausted'),
             };
             setErrorInfo(error);
             setRetryCount(currentRetryCount);
@@ -260,7 +262,7 @@ export function PhotoUploader({ onUploadComplete, onError }: PhotoUploaderProps)
           if (err.code === 'PRESIGN_EXPIRED' && hasPresignRetried) {
             const error: UploadError = {
               code: 'PRESIGN_FAILED',
-              message: 'Upload could not be completed. The upload URL expired repeatedly. Please try again.',
+              message: t('photoUploader.errorPresignRepeated'),
             };
             setErrorInfo(error);
             setRetryCount(currentRetryCount);
@@ -285,7 +287,7 @@ export function PhotoUploader({ onUploadComplete, onError }: PhotoUploaderProps)
           message:
             err instanceof Error
               ? err.message
-              : 'Upload failed. Please try again.',
+              : t('photoUploader.errorGeneric'),
         };
         setErrorInfo(error);
         setRetryCount(currentRetryCount);
@@ -312,7 +314,7 @@ export function PhotoUploader({ onUploadComplete, onError }: PhotoUploaderProps)
     }
     const error: UploadError = {
       code: 'PREVIEW_FAILED',
-      message: 'The selected image could not be previewed. Please select a different image.',
+      message: t('photoUploader.errorPreviewFailed'),
     };
     setPreviewUrl(null);
     setSelectedFile(null);
@@ -366,26 +368,26 @@ export function PhotoUploader({ onUploadComplete, onError }: PhotoUploaderProps)
           data-testid="idle-state"
         >
           <div className="photo-uploader__icon">📸</div>
-          <p className="photo-uploader__text">Drag &amp; drop a photo here, or</p>
+          <p className="photo-uploader__text">{t('photoUploader.dropzoneText')}</p>
           <div className="photo-uploader__actions">
-            <button
-              className="btn btn--primary"
-              type="button"
-              onClick={handleSelectFromGallery}
-              data-testid="select-gallery-btn"
-            >
-              Select from gallery
-            </button>
             {cameraAvailable && (
               <button
-                className="btn btn--secondary"
+                className="photo-uploader__btn-camera"
                 type="button"
                 onClick={handleCaptureFromCamera}
                 data-testid="capture-camera-btn"
               >
-                Take a photo
+                {t('photoUploader.takePhoto')}
               </button>
             )}
+            <button
+              className="photo-uploader__btn-gallery"
+              type="button"
+              onClick={handleSelectFromGallery}
+              data-testid="select-gallery-btn"
+            >
+              {t('photoUploader.selectGallery')}
+            </button>
           </div>
         </div>
       )}
@@ -409,7 +411,7 @@ export function PhotoUploader({ onUploadComplete, onError }: PhotoUploaderProps)
               onClick={handleCancelPreview}
               data-testid="cancel-btn"
             >
-              Cancel
+              {t('photoUploader.cancel')}
             </button>
             <button
               className="btn btn--primary"
@@ -417,7 +419,7 @@ export function PhotoUploader({ onUploadComplete, onError }: PhotoUploaderProps)
               onClick={handleConfirmUpload}
               data-testid="confirm-btn"
             >
-              Upload
+              {t('photoUploader.upload')}
             </button>
           </div>
         </div>
@@ -454,8 +456,8 @@ export function PhotoUploader({ onUploadComplete, onError }: PhotoUploaderProps)
           </div>
           {retryCount > 0 && (
             <p className="photo-uploader__retry-info" data-testid="retry-info">
-              Retrying… (attempt {retryCount} of {MAX_RETRIES})
-              {presignRetried && ' — refreshing upload URL'}
+              {t('photoUploader.retryingInfo', { current: retryCount, max: MAX_RETRIES })}
+              {presignRetried && t('photoUploader.refreshingUrl')}
             </p>
           )}
           <div className="photo-uploader__preview-actions">
@@ -465,7 +467,7 @@ export function PhotoUploader({ onUploadComplete, onError }: PhotoUploaderProps)
               disabled
               data-testid="cancel-btn"
             >
-              Cancel
+              {t('photoUploader.cancel')}
             </button>
             <button
               className="btn btn--primary"
@@ -473,7 +475,7 @@ export function PhotoUploader({ onUploadComplete, onError }: PhotoUploaderProps)
               disabled
               data-testid="confirm-btn"
             >
-              Uploading…
+              {t('photoUploader.uploading')}
             </button>
           </div>
         </div>
@@ -482,14 +484,14 @@ export function PhotoUploader({ onUploadComplete, onError }: PhotoUploaderProps)
       {/* Success state — confirmation message */}
       {state === 'success' && (
         <div className="photo-uploader__success" data-testid="success-state">
-          <p data-testid="success-message">Image uploaded successfully!</p>
+          <p data-testid="success-message">{t('photoUploader.uploadSuccess')}</p>
           <button
             className="btn btn--primary"
             type="button"
             onClick={resetState}
             data-testid="new-upload-btn"
           >
-            Upload another
+            {t('photoUploader.uploadAnother')}
           </button>
         </div>
       )}
@@ -506,7 +508,7 @@ export function PhotoUploader({ onUploadComplete, onError }: PhotoUploaderProps)
                 onClick={handleRetryUpload}
                 data-testid="retry-upload-btn"
               >
-                Retry upload
+                {t('photoUploader.retryUpload')}
               </button>
             )}
             <button
@@ -515,7 +517,7 @@ export function PhotoUploader({ onUploadComplete, onError }: PhotoUploaderProps)
               onClick={handleDismissError}
               data-testid="dismiss-error-btn"
             >
-              Try again
+              {t('photoUploader.tryAgain')}
             </button>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { useState, useCallback, type FormEvent } from 'react';
 import './ReviewForm.css';
 import type { ReviewFormProps, ProductData, ConfidenceLevel } from './types';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 /**
  * ReviewForm displays extracted product data for user review and editing.
@@ -8,6 +9,7 @@ import type { ReviewFormProps, ProductData, ConfidenceLevel } from './types';
  * productName is required; all other fields are optional.
  */
 export function ReviewForm({ extractionResult, onConfirm, onCancel }: ReviewFormProps) {
+  const { t } = useLanguage();
   const [productName, setProductName] = useState(extractionResult.productName ?? '');
   const [brand, setBrand] = useState(extractionResult.brand ?? '');
   const [presentation, setPresentation] = useState(extractionResult.presentation ?? '');
@@ -20,7 +22,7 @@ export function ReviewForm({ extractionResult, onConfirm, onCancel }: ReviewForm
 
       // Validate productName is non-empty (trimmed)
       if (!productName.trim()) {
-        setProductNameError('Product name is required.');
+        setProductNameError(t('reviewForm.productNameRequired'));
         return;
       }
 
@@ -57,13 +59,13 @@ export function ReviewForm({ extractionResult, onConfirm, onCancel }: ReviewForm
           data-testid="extraction-error"
           role="alert"
         >
-          AI extraction was unavailable. Please fill in the details manually.
+          {t('reviewForm.extractionError')}
         </div>
       )}
 
       {/* Product Name */}
       <div className="review-form__field">
-        <label htmlFor="review-productName">Product Name *</label>
+        <label htmlFor="review-productName">{t('reviewForm.productNameLabel')}</label>
         <input
           id="review-productName"
           type="text"
@@ -81,6 +83,7 @@ export function ReviewForm({ extractionResult, onConfirm, onCancel }: ReviewForm
         <ConfidenceIndicator
           level={extractionResult.confidence.productName}
           testId="confidence-productName"
+          t={t}
         />
         {productNameError && (
           <span
@@ -96,7 +99,7 @@ export function ReviewForm({ extractionResult, onConfirm, onCancel }: ReviewForm
 
       {/* Brand */}
       <div className="review-form__field">
-        <label htmlFor="review-brand">Brand</label>
+        <label htmlFor="review-brand">{t('reviewForm.brandLabel')}</label>
         <input
           id="review-brand"
           type="text"
@@ -108,12 +111,13 @@ export function ReviewForm({ extractionResult, onConfirm, onCancel }: ReviewForm
         <ConfidenceIndicator
           level={extractionResult.confidence.brand}
           testId="confidence-brand"
+          t={t}
         />
       </div>
 
       {/* Presentation */}
       <div className="review-form__field">
-        <label htmlFor="review-presentation">Presentation</label>
+        <label htmlFor="review-presentation">{t('reviewForm.presentationLabel')}</label>
         <input
           id="review-presentation"
           type="text"
@@ -125,12 +129,13 @@ export function ReviewForm({ extractionResult, onConfirm, onCancel }: ReviewForm
         <ConfidenceIndicator
           level={extractionResult.confidence.presentation}
           testId="confidence-presentation"
+          t={t}
         />
       </div>
 
       {/* Expiration Date */}
       <div className="review-form__field">
-        <label htmlFor="review-expirationDate">Expiration Date</label>
+        <label htmlFor="review-expirationDate">{t('reviewForm.expirationDateLabel')}</label>
         <input
           id="review-expirationDate"
           type="date"
@@ -142,6 +147,7 @@ export function ReviewForm({ extractionResult, onConfirm, onCancel }: ReviewForm
         <ConfidenceIndicator
           level={extractionResult.confidence.expirationDate}
           testId="confidence-expirationDate"
+          t={t}
         />
       </div>
 
@@ -153,14 +159,14 @@ export function ReviewForm({ extractionResult, onConfirm, onCancel }: ReviewForm
           onClick={handleCancel}
           data-testid="cancel-btn"
         >
-          Cancel
+          {t('reviewForm.cancel')}
         </button>
         <button
           className="btn btn--primary"
           type="submit"
           data-testid="submit-btn"
         >
-          Confirm
+          {t('reviewForm.confirm')}
         </button>
       </div>
     </form>
@@ -176,7 +182,15 @@ function getFieldClassName(confidence: ConfidenceLevel): string {
 }
 
 /** Displays a confidence indicator next to a field */
-function ConfidenceIndicator({ level, testId }: { level: ConfidenceLevel; testId: string }) {
+function ConfidenceIndicator({
+  level,
+  testId,
+  t,
+}: {
+  level: ConfidenceLevel;
+  testId: string;
+  t: (key: string, params?: Record<string, string | number>) => string;
+}) {
   if (level === 'low') {
     return (
       <span
@@ -184,7 +198,7 @@ function ConfidenceIndicator({ level, testId }: { level: ConfidenceLevel; testId
         data-testid={testId}
         aria-label="Low confidence"
       >
-        ⚠️ Low confidence
+        {t('reviewForm.lowConfidence')}
       </span>
     );
   }
@@ -196,7 +210,7 @@ function ConfidenceIndicator({ level, testId }: { level: ConfidenceLevel; testId
         data-testid={testId}
         aria-label="Medium confidence"
       >
-        Medium confidence
+        {t('reviewForm.mediumConfidence')}
       </span>
     );
   }
@@ -207,7 +221,7 @@ function ConfidenceIndicator({ level, testId }: { level: ConfidenceLevel; testId
       data-testid={testId}
       aria-label="High confidence"
     >
-      High confidence
+      {t('reviewForm.highConfidence')}
     </span>
   );
 }

@@ -9,32 +9,36 @@
    -------------------------------------------------------------------------- */
 
 :root {
-  /* Colors — PantryVision identity */
-  --color-primary: #059669;
-  --color-primary-hover: #047857;
-  --color-primary-light: #ECFDF5;
-  --color-accent: #3B82F6;
-  --color-accent-hover: #2563EB;
-  --color-accent-light: #EFF6FF;
+  /* Colors — PantryVision identity v3: tech, metallic, vibrant blue & gold */
+  --color-primary: #0077B6;          /* Bright metallic blue — solid buttons/icons with white text */
+  --color-primary-header-start: #003B73; /* Header gradient start (deep navy) */
+  --color-primary-header-end: #002244;   /* Header gradient end (near-black navy) */
+  --color-primary-hover: #005A8C;    /* Darker blue for hover */
+  --color-primary-light: #E0F2FE;    /* Light blue tint — active nav backgrounds, subtle highlights */
+  --color-accent: #E6AF2E;           /* Metallic gold/bronze — accent highlights, active tab underline, gallery button */
+  --color-accent-hover: #C88A12;     /* Darker gold for hover */
+  --color-accent-light: #FDF3DC;     /* Light gold tint — subtle accent backgrounds */
+  --color-neon-blue: #38BDF8;        /* Neon light blue — header logo text */
   --color-white: #FFFFFF;
-  --color-background: #FAFFFE;
+  --color-background-start: #D4DFE8; /* Page background gradient start (blue-gray) */
+  --color-background-end: #BACBD9;   /* Page background gradient end */
   --color-gray-50: #F8FAFB;
   --color-gray-100: #F1F5F9;
-  --color-gray-200: #E2E8F0;
+  --color-gray-200: #94A3B8;         /* Metallic gray/blue border tone, per brief's dropzone border color */
   --color-gray-300: #CBD5E1;
   --color-gray-400: #94A3B8;
   --color-gray-500: #64748B;
   --color-gray-700: #334155;
-  --color-gray-900: #0F172A;
-  --color-success: #059669;
-  --color-success-bg: #ECFDF5;
-  --color-warning: #F97316;
-  --color-warning-bg: #FFF7ED;
-  --color-error: #DC2626;
+  --color-gray-900: #002855;         /* Deep intense blue — main heading color per brief */
+  --color-success: #0077B6;
+  --color-success-bg: #E0F2FE;
+  --color-warning: #E6AF2E;
+  --color-warning-bg: #FDF3DC;
+  --color-error: #DC2626;            /* Keep existing red — do not soften error/expired signaling */
   --color-error-bg: #FEF2F2;
 
   /* Typography */
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-base: 1rem;
@@ -43,6 +47,7 @@
   --font-size-2xl: 1.5rem;
   --font-size-3xl: 2rem;
   --font-size-4xl: 2.5rem;
+  --font-weight-light: 300;
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
@@ -67,11 +72,11 @@
   --radius-xl: 20px;
   --radius-full: 9999px;
 
-  /* Shadows — tinted for warmth */
-  --shadow-sm: 0 1px 3px rgba(5, 150, 105, 0.06);
-  --shadow-md: 0 4px 12px rgba(5, 150, 105, 0.08);
-  --shadow-lg: 0 12px 24px rgba(5, 150, 105, 0.1);
-  --shadow-xl: 0 20px 40px rgba(5, 150, 105, 0.12);
+  /* Shadows — glassy/tech, cooler tint */
+  --shadow-sm: 0 2px 6px rgba(0, 40, 85, 0.12);
+  --shadow-md: 0px 8px 24px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 12px 32px rgba(0, 40, 85, 0.18);
+  --shadow-xl: 0 20px 48px rgba(0, 40, 85, 0.22);
 
   /* Transitions */
   --transition-fast: 0.15s ease;
@@ -96,7 +101,7 @@ body {
   font-weight: var(--font-weight-normal);
   line-height: 1.6;
   color: var(--color-gray-900);
-  background: var(--color-background);
+  background: linear-gradient(180deg, var(--color-background-start) 0%, var(--color-background-end) 100%);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -158,14 +163,16 @@ img {
 }
 
 .btn--primary {
-  background: var(--color-primary);
+  background: linear-gradient(180deg, #0077B6 0%, #004E89 100%);
   color: var(--color-white);
-  border-color: var(--color-primary);
+  font-weight: var(--font-weight-bold);
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn--primary:hover {
-  background: var(--color-primary-hover);
-  border-color: var(--color-primary-hover);
+  background: linear-gradient(180deg, #0086CC 0%, #005A9E 100%);
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }

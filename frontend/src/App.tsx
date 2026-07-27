@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import confetti from 'canvas-confetti';
 import './styles/App.css';
 import { PhotoUploader } from './components/PhotoUploader';
 import { ReviewForm, requestExtraction } from './components/ReviewForm';
@@ -8,10 +9,13 @@ import { saveProduct } from './services/productService';
 import { NavBar } from './components/NavBar';
 import type { AppView } from './components/NavBar';
 import { InventoryDashboard } from './components/InventoryDashboard';
+import { useLanguage } from './i18n/LanguageContext';
 
 type AppState = 'upload' | 'extracting' | 'review' | 'done';
 
-// Fallback result used when AI extraction is skipped or fails
+// Fallback result used when AI extraction is skipped or fails.
+// The error text here is internal-only (never rendered — ReviewForm shows its own
+// translated extractionError message when extractionResult.error is set).
 const FALLBACK_EXTRACTION_RESULT: ExtractionResult = {
   productName: null,
   brand: null,
@@ -27,6 +31,7 @@ const FALLBACK_EXTRACTION_RESULT: ExtractionResult = {
 };
 
 function App() {
+  const { t } = useLanguage();
   const [view, setView] = useState<AppView>('upload');
   const [appState, setAppState] = useState<AppState>('upload');
   const [extractionResult, setExtractionResult] = useState<ExtractionResult | null>(null);
@@ -34,9 +39,35 @@ function App() {
   const [objectKey, setObjectKey] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
+
+  // Rotate the friendly loading message while AI extraction is in progress.
+  useEffect(() => {
+    if (appState !== 'extracting') return;
+
+    const intervalId = setInterval(() => {
+      setLoadingMessageIndex((prev) => (prev + 1) % 3);
+    }, 2200);
+
+    return () => clearInterval(intervalId);
+  }, [appState]);
+
+  // Celebrate a successful save with a brief, tasteful gold confetti burst.
+  useEffect(() => {
+    if (appState === 'done') {
+      confetti({
+        particleCount: 60,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#E6AF2E', '#F0BE45', '#0077B6', '#FFFFFF'],
+        disableForReducedMotion: true,
+      });
+    }
+  }, [appState]);
 
   const handleUploadComplete = useCallback(async (objectKey: string) => {
     setObjectKey(objectKey);
+    setLoadingMessageIndex(0);
     setAppState('extracting');
 
     try {
@@ -107,7 +138,7 @@ function App() {
   return (
     <div>
       <header className="app-header">
-        <h1 className="app-header__title">PantryVision</h1>
+        <h1 className="app-header__title">Pantry Vision</h1>
       </header>
 
       <NavBar activeView={view} onSelectView={setView} />
@@ -117,31 +148,47 @@ function App() {
           <>
             {appState === 'upload' && (
               <div className="app-section">
-                <h2>Upload Product Photo</h2>
+                <h2>{t('photoUploader.title')}</h2>
                 <PhotoUploader
                   onUploadComplete={handleUploadComplete}
                   onError={handleUploadError}
                 />
+                <p className="app-section__help-text">{t('photoUploader.helpText')}</p>
               </div>
             )}
 
             {appState === 'extracting' && (
               <div className="app-section">
                 <div className="app-extracting" data-testid="extracting-state">
-                  <h2>Extracting product data...</h2>
+                  <h2>{t('extracting.title')}</h2>
                   <div
                     className="spinner"
                     data-testid="loading-indicator"
                     role="status"
                     aria-label="Loading"
                   ></div>
-                  <p className="app-extracting__message">Please wait while AI analyzes the image.</p>
+                  {(() => {
+                    const rotatingMessages = [
+                      t('extracting.rotatingMessage1'),
+                      t('extracting.rotatingMessage2'),
+                      t('extracting.rotatingMessage3'),
+                    ];
+                    return (
+                      <p
+                        className="app-extracting__message"
+                        key={loadingMessageIndex}
+                        data-testid="extracting-message"
+                      >
+                        {rotatingMessages[loadingMessageIndex % rotatingMessages.length]}
+                      </p>
+                    );
+                  })()}
                   <button
                     className="btn btn--secondary"
                     data-testid="skip-extraction-btn"
                     onClick={handleSkipExtraction}
                   >
-                    Skip to manual entry
+                    {t('extracting.skipButton')}
                   </button>
                 </div>
               </div>
@@ -149,18 +196,18 @@ function App() {
 
             {appState === 'review' && extractionResult && (
               <section className="app-section">
-                <h2 className="app-section__title">Review Product Data</h2>
+                <h2 className="app-section__title">{t('reviewForm.title')}</h2>
                 {saving && (
                   <div className="app-extracting" data-testid="saving-state">
                     <div className="spinner" role="status" aria-label="Saving"></div>
-                    <p className="app-extracting__message">Saving product to inventory...</p>
+                    <p className="app-extracting__message">{t('saving.message')}</p>
                   </div>
                 )}
                 {saveError && (
                   <div className="photo-uploader__error" role="alert" data-testid="save-error">
                     <p>{saveError}</p>
                     <button className="btn btn--secondary" onClick={() => setSaveError(null)}>
-                      Dismiss
+                      {t('saving.dismiss')}
                     </button>
                   </div>
                 )}
@@ -178,14 +225,14 @@ function App() {
                   <div className="app-done__card">
                     <div className="app-done__icon">✅</div>
                     <p className="app-done__message">
-                      Product &quot;<span className="app-done__product-name">{confirmedProduct.productName}</span>&quot; has been registered.
+                      {t('done.message', { name: confirmedProduct.productName })}
                     </p>
                     <button
                       className="btn btn--primary"
                       data-testid="upload-another-btn"
                       onClick={handleUploadAnother}
                     >
-                      Upload Another
+                      {t('done.uploadAnother')}
                     </button>
                   </div>
                 </div>

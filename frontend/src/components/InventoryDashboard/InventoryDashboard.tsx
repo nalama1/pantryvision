@@ -3,8 +3,10 @@ import './InventoryDashboard.css';
 import { listProducts } from '../../services/inventoryService';
 import type { InventoryProduct } from '../../services/inventoryService';
 import { getExpirationStatus, type ExpirationStatus } from './expirationStatus';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 export function InventoryDashboard() {
+  const { t } = useLanguage();
   const [products, setProducts] = useState<InventoryProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -58,7 +60,7 @@ export function InventoryDashboard() {
     return (
       <div className="inventory-dashboard__loading" data-testid="inventory-loading">
         <div className="spinner" role="status" aria-label="Loading inventory"></div>
-        <p>Loading your inventory...</p>
+        <p>{t('inventoryDashboard.loading')}</p>
       </div>
     );
   }
@@ -68,7 +70,7 @@ export function InventoryDashboard() {
       <div className="inventory-dashboard__error" role="alert" data-testid="inventory-error">
         <p>{error}</p>
         <button className="btn btn--primary" onClick={fetchProducts} data-testid="retry-btn">
-          Retry
+          {t('inventoryDashboard.retry')}
         </button>
       </div>
     );
@@ -78,7 +80,7 @@ export function InventoryDashboard() {
     return (
       <div className="inventory-dashboard__empty" data-testid="inventory-empty">
         <div className="inventory-dashboard__empty-icon">📦</div>
-        <p>No products saved yet. Upload a photo to get started!</p>
+        <p>{t('inventoryDashboard.emptyMessage')}</p>
       </div>
     );
   }
@@ -93,7 +95,7 @@ export function InventoryDashboard() {
           data-testid="filter-expired"
           aria-pressed={activeFilter === 'expired'}
         >
-          ❌ Expired ({counts.expired})
+          {t('inventoryDashboard.filterExpired')} ({counts.expired})
         </button>
         <button
           type="button"
@@ -102,7 +104,7 @@ export function InventoryDashboard() {
           data-testid="filter-expiring-soon"
           aria-pressed={activeFilter === 'expiring-soon'}
         >
-          ⏰ Expiring Soon ({counts['expiring-soon']})
+          {t('inventoryDashboard.filterExpiringSoon')} ({counts['expiring-soon']})
         </button>
         <button
           type="button"
@@ -111,18 +113,18 @@ export function InventoryDashboard() {
           data-testid="filter-ok"
           aria-pressed={activeFilter === 'normal'}
         >
-          ✅ Good ({counts.normal})
+          {t('inventoryDashboard.filterGood')} ({counts.normal})
         </button>
       </div>
 
       {filteredProducts.length === 0 ? (
         <div className="inventory-dashboard__empty" data-testid="inventory-filtered-empty">
-          <p>No products match this filter.</p>
+          <p>{t('inventoryDashboard.noFilterMatch')}</p>
         </div>
       ) : (
         <div className="inventory-dashboard__grid" data-testid="inventory-grid">
           {filteredProducts.map(({ product, status }) => (
-            <ProductCard key={product.productId} product={product} status={status} />
+            <ProductCard key={product.productId} product={product} status={status} t={t} />
           ))}
         </div>
       )}
@@ -130,7 +132,15 @@ export function InventoryDashboard() {
   );
 }
 
-function ProductCard({ product, status }: { product: InventoryProduct; status: ExpirationStatus }) {
+function ProductCard({
+  product,
+  status,
+  t,
+}: {
+  product: InventoryProduct;
+  status: ExpirationStatus;
+  t: (key: string, params?: Record<string, string | number>) => string;
+}) {
   const cardClass = `inventory-card inventory-card--${status}`;
 
   return (
@@ -143,26 +153,26 @@ function ProductCard({ product, status }: { product: InventoryProduct; status: E
             alt={product.productName || 'Product photo'}
           />
         ) : (
-          <div className="inventory-card__placeholder" aria-label="No image available">
+          <div className="inventory-card__placeholder" aria-label={t('inventoryDashboard.noImageAlt')}>
             📷
           </div>
         )}
         {status === 'expired' && (
-          <span className="inventory-card__badge inventory-card__badge--expired">❌ Expired</span>
+          <span className="inventory-card__badge inventory-card__badge--expired">{t('inventoryDashboard.badgeExpired')}</span>
         )}
         {status === 'expiring-soon' && (
-          <span className="inventory-card__badge inventory-card__badge--expiring-soon">⏰ Expiring Soon</span>
+          <span className="inventory-card__badge inventory-card__badge--expiring-soon">{t('inventoryDashboard.badgeExpiringSoon')}</span>
         )}
         {status === 'normal' && (
-          <span className="inventory-card__badge inventory-card__badge--normal">✅ Fresh</span>
+          <span className="inventory-card__badge inventory-card__badge--normal">{t('inventoryDashboard.badgeFresh')}</span>
         )}
       </div>
       <div className="inventory-card__content">
-        <h3 className="inventory-card__name">{product.productName || 'Unnamed product'}</h3>
+        <h3 className="inventory-card__name">{product.productName || t('inventoryDashboard.unnamedProduct')}</h3>
         {product.brand && <p className="inventory-card__brand">{product.brand}</p>}
         {product.presentation && <p className="inventory-card__presentation">{product.presentation}</p>}
         {product.expirationDate && (
-          <p className="inventory-card__expiration">Expires: {product.expirationDate}</p>
+          <p className="inventory-card__expiration">{t('inventoryDashboard.expiresLabel', { date: product.expirationDate })}</p>
         )}
         <p className="inventory-card__quantity">
           {product.quantity} {product.unit}

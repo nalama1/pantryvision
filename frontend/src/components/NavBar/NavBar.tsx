@@ -1,4 +1,5 @@
 import './NavBar.css';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 export type AppView = 'upload' | 'inventory';
 
@@ -8,6 +9,8 @@ export interface NavBarProps {
 }
 
 export function NavBar({ activeView, onSelectView }: NavBarProps) {
+  const { t, language, setLanguage } = useLanguage();
+
   return (
     <nav className="nav-bar" data-testid="nav-bar">
       <button
@@ -17,7 +20,7 @@ export function NavBar({ activeView, onSelectView }: NavBarProps) {
         data-testid="nav-upload-btn"
         aria-current={activeView === 'upload' ? 'page' : undefined}
       >
-        Upload
+        {t('navBar.upload')}
       </button>
       <button
         type="button"
@@ -26,8 +29,31 @@ export function NavBar({ activeView, onSelectView }: NavBarProps) {
         data-testid="nav-inventory-btn"
         aria-current={activeView === 'inventory' ? 'page' : undefined}
       >
-        My Inventory
+        {t('navBar.inventory')}
       </button>
+
+      <div className="nav-bar__language-switcher" data-testid="language-switcher">
+        <button
+          type="button"
+          className={`nav-bar__lang-btn ${language === 'es' ? 'nav-bar__lang-btn--active' : ''}`}
+          onClick={() => setLanguage('es')}
+          data-testid="lang-es-btn"
+          aria-pressed={language === 'es'}
+          aria-label="Español"
+        >
+          🇪🇸
+        </button>
+        <button
+          type="button"
+          className={`nav-bar__lang-btn ${language === 'en' ? 'nav-bar__lang-btn--active' : ''}`}
+          onClick={() => setLanguage('en')}
+          data-testid="lang-en-btn"
+          aria-pressed={language === 'en'}
+          aria-label="English"
+        >
+          🇺🇸
+        </button>
+      </div>
     </nav>
   );
 }
