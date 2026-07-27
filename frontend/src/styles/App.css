@@ -70,10 +70,11 @@
 }
 
 .app-section__help-text {
-  color: #334155;
+  color: #1E293B;
   font-size: var(--font-size-xs);
   font-style: italic;
-  font-weight: var(--font-weight-normal);
+  font-weight: 500;
+  opacity: 1;
   margin-top: var(--space-3);
 }
 
