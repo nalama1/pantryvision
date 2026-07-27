@@ -1,0 +1,163 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  PantryVision - List Products Lambda function with API Gateway endpoint.
+  Defines the Lambda function, IAM execution role, and REST API for retrieving
+  all product records from DynamoDB with presigned S3 image URLs.
+
+Parameters:
+  TableName:
+    Type: String
+    Default: pantryvision-products
+    Description: Name of the DynamoDB table for product inventory storage.
+
+  BucketName:
+    Type: String
+    Default: pantryvision-product-images
+    Description: Name of the S3 bucket storing product images.
+
+  StageName:
+    Type: String
+    Default: prod
+    Description: API Gateway deployment stage name.
+
+Resources:
+  # IAM Execution Role - minimum required permissions
+  ListProductsExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: list-products-execution-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        # Basic Lambda execution (CloudWatch Logs)
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: dynamodb-scan-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:Scan
+                Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TableName}"
+        - PolicyName: s3-get-object-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                Resource: !Sub "arn:aws:s3:::${BucketName}/*"
+
+  # Lambda Function
+  ListProductsFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: list-products
+      Runtime: python3.12
+      Handler: handler.lambda_handler
+      MemorySize: 128
+      Timeout: 10
+      Role: !GetAtt ListProductsExecutionRole.Arn
+      Code:
+        S3Bucket: !Sub "pantryvision-deployment-${AWS::AccountId}"
+        S3Key: backend/list-products.zip
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TableName
+          BUCKET_NAME: !Ref BucketName
+
+  # API Gateway REST API
+  ListApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: pantryvision-list-api
+      Description: API for PantryVision list products from inventory
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  # API Gateway Resource: /list-products
+  ListProductsResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref ListApi
+      ParentId: !GetAtt ListApi.RootResourceId
+      PathPart: list-products
+
+  # API Gateway Method: GET /list-products (TEMPORARY: auth disabled for testing)
+  ListProductsGetMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ListApi
+      ResourceId: !Ref ListProductsResource
+      HttpMethod: GET
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ListProductsFunction.Arn}/invocations"
+
+  # CORS: OPTIONS method for preflight requests
+  ListProductsOptionsMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ListApi
+      ResourceId: !Ref ListProductsResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ""
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+
+  # Lambda permission for API Gateway invocation
+  ListFunctionApiGatewayPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ListProductsFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ListApi}/*/GET/list-products"
+
+  # API Gateway Deployment
+  ApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - ListProductsGetMethod
+      - ListProductsOptionsMethod
+    Properties:
+      RestApiId: !Ref ListApi
+      StageName: !Ref StageName
+
+Outputs:
+  ListApiEndpoint:
+    Description: API Gateway endpoint URL for the list-products resource
+    Value: !Sub "https://${ListApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}/list-products"
+
+  LambdaFunctionArn:
+    Description: ARN of the list-products Lambda function
+    Value: !GetAtt ListProductsFunction.Arn
+
+  ExecutionRoleArn:
+    Description: ARN of the Lambda execution role
+    Value: !GetAtt ListProductsExecutionRole.Arn

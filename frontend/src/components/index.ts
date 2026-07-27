@@ -3,3 +3,7 @@ export type { PhotoUploaderProps, UploadState } from './PhotoUploader';
 export type { UploadError, ValidationResult } from './PhotoUploader';
 export { ReviewForm, requestExtraction, ExtractionServiceError } from './ReviewForm';
 export type { ExtractionResult, ProductData, ReviewFormProps, ConfidenceLevel } from './ReviewForm';
+export { NavBar } from './NavBar';
+export type { NavBarProps, AppView } from './NavBar';
+export { InventoryDashboard } from './InventoryDashboard';
+export type { ExpirationStatus } from './InventoryDashboard';

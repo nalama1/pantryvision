@@ -1,0 +1,115 @@
+/* ==========================================================================
+   Inventory Dashboard Styles
+   ========================================================================== */
+
+.inventory-dashboard__loading,
+.inventory-dashboard__error,
+.inventory-dashboard__empty {
+  text-align: center;
+  padding: var(--space-16) var(--space-4);
+}
+
+.inventory-dashboard__empty-icon {
+  font-size: 3rem;
+  margin-bottom: var(--space-4);
+}
+
+.inventory-dashboard__error p {
+  color: var(--color-error);
+  margin-bottom: var(--space-6);
+}
+
+.inventory-dashboard__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-6);
+}
+
+.inventory-card {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.inventory-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.inventory-card--expiring-soon {
+  border: 2px solid var(--color-warning);
+}
+
+.inventory-card--expired {
+  border: 2px solid var(--color-error);
+}
+
+.inventory-card__image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  background: var(--color-gray-100);
+}
+
+.inventory-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.inventory-card__placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  color: var(--color-gray-400);
+}
+
+.inventory-card__badge {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.inventory-card__badge--expired {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+}
+
+.inventory-card__badge--expiring-soon {
+  background: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+.inventory-card__content {
+  padding: var(--space-4);
+}
+
+.inventory-card__name {
+  font-size: var(--font-size-lg);
+  margin: 0 0 var(--space-2);
+}
+
+.inventory-card__brand,
+.inventory-card__presentation,
+.inventory-card__expiration,
+.inventory-card__quantity {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  margin: 0 0 var(--space-1);
+}
+
+.inventory-card__quantity {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-700);
+}
