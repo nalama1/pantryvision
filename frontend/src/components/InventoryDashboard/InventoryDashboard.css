@@ -39,11 +39,15 @@
 }
 
 .inventory-card--expiring-soon {
-  border: 2px solid var(--color-warning);
+  border: 2px solid #8B5CF6;
 }
 
 .inventory-card--expired {
   border: 2px solid var(--color-error);
+}
+
+.inventory-card--normal {
+  border: 2px solid var(--color-primary);
 }
 
 .inventory-card__image-wrapper {
@@ -87,8 +91,13 @@
 }
 
 .inventory-card__badge--expiring-soon {
-  background: var(--color-warning-bg);
-  color: var(--color-warning);
+  background: #F3E8FF;
+  color: #8B5CF6;
+}
+
+.inventory-card__badge--normal {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
 }
 
 .inventory-card__content {
@@ -112,4 +121,80 @@
 .inventory-card__quantity {
   font-weight: var(--font-weight-medium);
   color: var(--color-gray-700);
+}
+
+/* ==========================================================================
+   Filter Buttons
+   ========================================================================== */
+
+.inventory-filters {
+  display: flex;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.inventory-filter {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.inventory-filter--expired {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+  border-color: var(--color-error-bg);
+}
+
+.inventory-filter--expired:hover {
+  border-color: var(--color-error);
+}
+
+.inventory-filter--expired.inventory-filter--active {
+  background: var(--color-error);
+  color: var(--color-white);
+  border-color: var(--color-error);
+}
+
+.inventory-filter--expiring-soon {
+  background: #F3E8FF;
+  color: #8B5CF6;
+  border-color: #F3E8FF;
+}
+
+.inventory-filter--expiring-soon:hover {
+  border-color: #8B5CF6;
+}
+
+.inventory-filter--expiring-soon.inventory-filter--active {
+  background: #8B5CF6;
+  color: var(--color-white);
+  border-color: #8B5CF6;
+}
+
+.inventory-filter--normal {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border-color: var(--color-primary-light);
+}
+
+.inventory-filter--normal:hover {
+  border-color: var(--color-primary);
+}
+
+.inventory-filter--normal.inventory-filter--active {
+  background: var(--color-primary);
+  color: var(--color-white);
+  border-color: var(--color-primary);
+}
+
+.inventory-filter:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
