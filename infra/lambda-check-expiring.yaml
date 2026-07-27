@@ -1,0 +1,126 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  PantryVision - Check Expiring Products Lambda function, triggered daily by
+  an Amazon EventBridge scheduled rule. Scans the pantryvision-products
+  DynamoDB table, classifies products as Expiring_Product or Expired_Product,
+  and sends a consolidated alert email via Amazon SES when needed.
+  Note: in addition to the daily EventBridge schedule, this function can also
+  be invoked manually at any time (AWS Console "Test" button or
+  `aws lambda invoke`) for live demo purposes, independent of the schedule.
+
+Parameters:
+  TableName:
+    Type: String
+    Default: pantryvision-products
+    Description: Name of the DynamoDB table for product inventory storage.
+
+  AlertSenderEmail:
+    Type: String
+    Description: >
+      Verified SES sender email address used to send expiration alert
+      emails. Must be provided at deploy time (e.g. via
+      --parameter-overrides) and verified as an SES identity beforehand.
+
+  AlertRecipientEmail:
+    Type: String
+    Description: >
+      Recipient email address that receives expiration alert emails. Must
+      be provided at deploy time and verified as an SES identity while SES
+      is in sandbox mode.
+
+  ScheduleExpression:
+    Type: String
+    Default: "cron(0 8 * * ? *)"
+    Description: >
+      EventBridge schedule expression controlling how often the expiration
+      check runs. Defaults to daily at 8:00 AM UTC.
+
+Resources:
+  # IAM Execution Role - minimum required permissions
+  CheckExpiringProductsExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: check-expiring-products-execution-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        # Basic Lambda execution (CloudWatch Logs)
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: dynamodb-scan-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:Scan
+                Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TableName}"
+        - PolicyName: ses-send-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ses:SendEmail
+                  - ses:SendRawEmail
+                Resource: !Sub "arn:aws:ses:${AWS::Region}:${AWS::AccountId}:identity/${AlertSenderEmail}"
+
+  # Lambda Function
+  # Can be invoked manually (Console "Test" button or `aws lambda invoke`)
+  # at any time for demo purposes, independent of the EventBridge schedule.
+  CheckExpiringProductsFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: check-expiring-products
+      Runtime: python3.12
+      Handler: handler.lambda_handler
+      MemorySize: 128
+      Timeout: 60
+      Role: !GetAtt CheckExpiringProductsExecutionRole.Arn
+      Code:
+        S3Bucket: !Sub "pantryvision-deployment-${AWS::AccountId}"
+        S3Key: backend/check-expiring-products.zip
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TableName
+          ALERT_SENDER_EMAIL: !Ref AlertSenderEmail
+          ALERT_RECIPIENT_EMAIL: !Ref AlertRecipientEmail
+
+  # EventBridge Rule - daily schedule trigger
+  DailyExpirationCheckRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: daily-expiration-check-rule
+      Description: Triggers the check-expiring-products Lambda function on a daily schedule.
+      ScheduleExpression: !Ref ScheduleExpression
+      State: ENABLED
+      Targets:
+        - Arn: !GetAtt CheckExpiringProductsFunction.Arn
+          Id: CheckExpiringProductsTarget
+
+  # Lambda permission for EventBridge invocation
+  EventBridgeInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref CheckExpiringProductsFunction
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt DailyExpirationCheckRule.Arn
+
+Outputs:
+  LambdaFunctionArn:
+    Description: ARN of the check-expiring-products Lambda function
+    Value: !GetAtt CheckExpiringProductsFunction.Arn
+
+  ExecutionRoleArn:
+    Description: ARN of the Lambda execution role
+    Value: !GetAtt CheckExpiringProductsExecutionRole.Arn
+
+  ScheduleRuleArn:
+    Description: ARN of the EventBridge daily schedule rule
+    Value: !GetAtt DailyExpirationCheckRule.Arn

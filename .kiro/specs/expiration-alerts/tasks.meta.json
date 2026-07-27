@@ -1,0 +1,271 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1. Set up Lambda project structure and shared types": [
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785163357237
+      },
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785163404997
+      },
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785165211791
+      }
+    ],
+    "2.1 Implement `classify_products(products, current_date)`": [
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785163358361
+      },
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785163406236
+      },
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785165212217
+      }
+    ],
+    "2.5 Implement `build_email_body(alert_batch)`": [
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785163358428
+      },
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785163407257
+      },
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785165212987
+      }
+    ],
+    "3. Checkpoint - Ensure all classification/email-body tests pass": [
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785163358496
+      },
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785165252632
+      },
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785165473201
+      }
+    ],
+    "4.1 Implement `get_alert_config()`": [
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785163358583
+      },
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785163408552
+      },
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785165214043
+      }
+    ],
+    "4.3 Implement `scan_products(table)`": [
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785163358657
+      },
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785165253442
+      },
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785165471982
+      }
+    ],
+    "4.6 Implement `send_alert_email(ses_client, sender, recipient, subject, body)`": [
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785163358747
+      },
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785165254267
+      },
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785165474469
+      }
+    ],
+    "4.10 Implement `log_run_summary(expiring_count, expired_count, status, failure_reason=None)`": [
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785163358845
+      },
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785163409314
+      },
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785165214983
+      }
+    ],
+    "5. Checkpoint - Ensure all I/O function tests pass": [
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785163358903
+      },
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785165495632
+      },
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785165534876
+      }
+    ],
+    "6.1 Implement `lambda_handler(event, context)`": [
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785163359002
+      },
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785165544260
+      },
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785165760132
+      }
+    ],
+    "7. Checkpoint - Ensure all handler and integration tests pass": [
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785163359088
+      },
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785165765705
+      },
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785165808698
+      }
+    ],
+    "8.1 Create `infra/lambda-check-expiring.yaml`": [
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785163359144
+      },
+      {
+        "executionId": "c7ae863b-35ec-4d35-8ade-29cb37a475fa",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785166044266
+      }
+    ],
+    "9. Checkpoint - Ensure all tests pass before deployment steps": [
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785163359199
+      },
+      {
+        "executionId": "a10c10b1-e1be-4945-b392-bee93f60c431",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785166563899
+      },
+      {
+        "executionId": "a10c10b1-e1be-4945-b392-bee93f60c431",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785166743546
+      }
+    ],
+    "10. Manual step: verify SES identities (sandbox mode)": [
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785163359277
+      },
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785163369763
+      }
+    ],
+    "11. Manual step: deploy the CloudFormation stack and confirm the schedule fires": [
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785163359368
+      },
+      {
+        "executionId": "dec043f7-7e9a-47e7-acb6-384f94edb250",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785166998725
+      },
+      {
+        "executionId": "dec043f7-7e9a-47e7-acb6-384f94edb250",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785168223376
+      }
+    ],
+    "2. Implement classification and email body construction (pure functions)": [
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785165213088
+      }
+    ],
+    "4. Implement configuration reading, DynamoDB scan, and SES send (I/O functions)": [
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785165474602
+      }
+    ],
+    "6. Implement the orchestrating lambda_handler": [
+      {
+        "executionId": "d2a4c2c2-c956-475b-9fd1-14eb358e2f03",
+        "chatSessionId": "sess_3583333d-41a7-4fad-992b-29ace23115f5",
+        "timestamp": 1785165760218
+      }
+    ]
+  }
+}
