@@ -14,6 +14,7 @@ A serverless web application for household inventory management. Upload a photo 
 - [🔒 Security](#security)
 - [☁️ AWS Well-Architected Alignment](#aws-well-architected-alignment)
 - [📄 License](#license)
+- [🏆 About This Project](#about-this-project)
 
 <a id="problem"></a>
 ## 🧩 Problem
@@ -216,5 +217,26 @@ VITE_COGNITO_IDENTITY_POOL_ID=<COGNITO_IDENTITY_POOL_ID>
 ## 📄 License
 
 MIT
+
+<p align="right"><a href="#top">⬆️ Back to top</a></p>
+
+<a id="about-this-project"></a>
+## 🏆 About This Project
+
+PantryVision was developed as part of the Kiro Hackathon, organized by
+Código Facilito in collaboration with AWS and Kiro AI.
+
+### Highlights
+
+- 🚀 Built during an intensive 6-day development sprint
+- 👩‍💻 Designed and implemented individually
+- ☁️ Built using AWS serverless services
+- 🤖 Uses Amazon Bedrock to extract product information from images
+- 📱 Responsive web application deployed on AWS Amplify
+- 🎯 Created to help reduce household food waste by tracking product expiration dates
+
+This project was created as a hackathon MVP and represents a functional
+proof of concept. Future improvements may include authentication, push
+notifications, barcode scanning, and advanced inventory analytics.
 
 <p align="right"><a href="#top">⬆️ Back to top</a></p>
