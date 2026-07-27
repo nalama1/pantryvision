@@ -15,7 +15,7 @@ export const translations = {
       inventory: '🧺 My Pantry',
     },
     photoUploader: {
-      title: 'Add product to your pantry',
+      title: 'Add product',
       helpText: 'Take a photo of the product or expiration date. AI will automatically scan it for you.',
       dropzoneText: 'Drag & drop a photo here, or',
       selectGallery: '🖼️ Choose from gallery',
@@ -93,7 +93,7 @@ export const translations = {
       inventory: '🧺 Mi Despensa',
     },
     photoUploader: {
-      title: 'Agregar producto a la despensa',
+      title: 'Agregar producto',
       helpText: 'Toma una foto al empaque o a la fecha de vencimiento. La inteligencia artificial la detectará por ti.',
       dropzoneText: 'Arrastra una foto aquí, o',
       selectGallery: '🖼️ Galería de fotos',
