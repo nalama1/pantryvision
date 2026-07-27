@@ -11,6 +11,7 @@ A serverless web application for household inventory management. Upload a photo 
 - [📁 Project Structure](#project-structure)
 - [🚀 Getting Started](#getting-started)
 - [🛠️ Tech Stack](#tech-stack)
+- [🛠️ Built With](#built-with)
 - [🔒 Security](#security)
 - [☁️ AWS Well-Architected Alignment](#aws-well-architected-alignment)
 - [📄 License](#license)
@@ -184,6 +185,24 @@ VITE_COGNITO_IDENTITY_POOL_ID=<COGNITO_IDENTITY_POOL_ID>
 | AI Model | Amazon Bedrock (Amazon Nova Pro) |
 | Storage | Amazon S3 (private) |
 | Infrastructure | CloudFormation |
+
+<p align="right"><a href="#top">⬆️ Back to top</a></p>
+
+<a id="built-with"></a>
+## 🛠️ Built With
+
+[![AWS](https://img.shields.io/badge/AWS-Serverless-FF9900?logo=amazonaws&logoColor=white)](https://aws.amazon.com/)
+[![Amazon Bedrock](https://img.shields.io/badge/Amazon%20Bedrock-Nova%20Pro-FF9900?logo=amazonaws&logoColor=white)](https://aws.amazon.com/bedrock/)
+[![AWS Lambda](https://img.shields.io/badge/AWS%20Lambda-Python%203.12-FF9900?logo=awslambda&logoColor=white)](https://aws.amazon.com/lambda/)
+[![Amazon DynamoDB](https://img.shields.io/badge/Amazon%20DynamoDB-on--demand-4053D6?logo=amazondynamodb&logoColor=white)](https://aws.amazon.com/dynamodb/)
+[![Amazon S3](https://img.shields.io/badge/Amazon%20S3-private-569A31?logo=amazons3&logoColor=white)](https://aws.amazon.com/s3/)
+[![AWS Amplify](https://img.shields.io/badge/AWS%20Amplify-Hosting-FF9900?logo=awsamplify&logoColor=white)](https://aws.amazon.com/amplify/)
+[![Kiro](https://img.shields.io/badge/Built%20with-Kiro%20AI-8B5CF6)](https://kiro.dev/)
+[![Python](https://img.shields.io/badge/Python-3.12-blue?logo=python&logoColor=white)](https://www.python.org/)
+[![React](https://img.shields.io/badge/React-18.3-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-6.0-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
 <p align="right"><a href="#top">⬆️ Back to top</a></p>
 
