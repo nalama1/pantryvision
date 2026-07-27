@@ -57,7 +57,7 @@ when an individual is officially representing the project in public spaces.
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported to the project maintainer at **<MAINTAINER_EMAIL>**. All complaints
+reported to the project maintainer at **acujilem@espol.edu.ec**. All complaints
 will be reviewed and investigated promptly and fairly.
 
 The maintainer is obligated to respect the privacy and security of the

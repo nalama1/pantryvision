@@ -56,6 +56,15 @@ avoid them going out of sync.
 - AWS resource names (S3 buckets, DynamoDB tables, Lambda functions) use
   `kebab-case`, all lowercase (e.g., `pantryvision-product-images`)
 
+### Language
+
+- **Code comments** are written in English, to stay consistent with the
+  existing codebase.
+- **Issues, pull requests, and discussions** can be written in **English or
+  Spanish** — whichever is more comfortable for you. This project originated
+  in a Spanish-speaking context, so Spanish contributions are just as
+  welcome as English ones.
+
 ## Commit Conventions
 
 - Keep commits small and focused on a single change

@@ -1,12 +1,29 @@
-# PantryVision
+<a id="top"></a>
+# 🥫 PantryVision
 
 A serverless web application for household inventory management. Upload a photo of a product, and a vision AI model extracts the name, brand, presentation, and expiration date. Confirm the data, and the system saves it to your personal inventory with expiration and low-stock alerts.
 
-## Problem
+## Table of Contents
+
+- [🧩 Problem](#problem)
+- [🏗️ Architecture](#architecture)
+- [✨ Features](#features)
+- [📁 Project Structure](#project-structure)
+- [🚀 Getting Started](#getting-started)
+- [🛠️ Tech Stack](#tech-stack)
+- [🔒 Security](#security)
+- [☁️ AWS Well-Architected Alignment](#aws-well-architected-alignment)
+- [📄 License](#license)
+
+<a id="problem"></a>
+## 🧩 Problem
 
 There is no record of what was purchased, when, and when it expires. This leads to waste from expired products and duplicate or late purchases.
 
-## Architecture
+<p align="right"><a href="#top">⬆️ Back to top</a></p>
+
+<a id="architecture"></a>
+## 🏗️ Architecture
 
 PantryVision is built entirely on AWS using a 100% serverless, pay-per-use architecture.
 
@@ -56,7 +73,10 @@ access — no login required).
 | Amazon CloudWatch | Monitoring and logging |
 | Amazon Cognito | Identity Pool for temporary, scoped AWS credentials (SigV4 request signing) |
 
-## Features
+<p align="right"><a href="#top">⬆️ Back to top</a></p>
+
+<a id="features"></a>
+## ✨ Features
 
 - **Photo Upload** — Select or capture a product image (JPEG, PNG, WebP, max 5 MB)
 - **AI Data Extraction** — Amazon Bedrock (Amazon Nova Pro) extracts product name, brand, presentation, and expiration date
@@ -65,7 +85,10 @@ access — no login required).
 - **Inventory Dashboard** — View, filter (Expired / Expiring Soon / Good), and browse saved products with images
 - **Expiration Alerts** — Daily automated email (Amazon EventBridge + SES) listing products expiring within 7 days or already expired, with a clean HTML summary
 
-## Project Structure
+<p align="right"><a href="#top">⬆️ Back to top</a></p>
+
+<a id="project-structure"></a>
+## 📁 Project Structure
 
 ```
 /frontend   → React app (TypeScript, Vite)
@@ -73,7 +96,10 @@ access — no login required).
 /infra      → CloudFormation templates
 ```
 
-## Getting Started
+<p align="right"><a href="#top">⬆️ Back to top</a></p>
+
+<a id="getting-started"></a>
+## 🚀 Getting Started
 
 ### Prerequisites
 
@@ -144,7 +170,10 @@ VITE_COGNITO_IDENTITY_POOL_ID=<COGNITO_IDENTITY_POOL_ID>
 | `BEDROCK_TIMEOUT` | Timeout in seconds for AI invocation |
 | `TABLE_NAME` | DynamoDB table for product inventory |
 
-## Tech Stack
+<p align="right"><a href="#top">⬆️ Back to top</a></p>
+
+<a id="tech-stack"></a>
+## 🛠️ Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
@@ -155,7 +184,10 @@ VITE_COGNITO_IDENTITY_POOL_ID=<COGNITO_IDENTITY_POOL_ID>
 | Storage | Amazon S3 (private) |
 | Infrastructure | CloudFormation |
 
-## Security
+<p align="right"><a href="#top">⬆️ Back to top</a></p>
+
+<a id="security"></a>
+## 🔒 Security
 
 - All S3 buckets are private — access only via presigned URLs
 - API endpoints use AWS IAM authorization
@@ -164,7 +196,10 @@ VITE_COGNITO_IDENTITY_POOL_ID=<COGNITO_IDENTITY_POOL_ID>
 - Principle of Least Privilege applied to all IAM roles
 - Anonymous visitors receive short-lived, scoped AWS credentials via a Cognito Identity Pool (no long-term keys exposed in frontend code)
 
-## AWS Well-Architected Alignment
+<p align="right"><a href="#top">⬆️ Back to top</a></p>
+
+<a id="aws-well-architected-alignment"></a>
+## ☁️ AWS Well-Architected Alignment
 
 | Pillar | How PantryVision applies it |
 |--------|----------------------------|
@@ -175,6 +210,11 @@ VITE_COGNITO_IDENTITY_POOL_ID=<COGNITO_IDENTITY_POOL_ID>
 | Operational Excellence | Infrastructure as code (CloudFormation), structured CloudWatch logging with duration and token metrics |
 | Sustainability | Serverless scales to zero (no idle resources), image resized before AI to reduce compute, direct-to-S3 uploads bypass Lambda, capped token output |
 
-## License
+<p align="right"><a href="#top">⬆️ Back to top</a></p>
+
+<a id="license"></a>
+## 📄 License
 
 MIT
+
+<p align="right"><a href="#top">⬆️ Back to top</a></p>

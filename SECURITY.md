@@ -15,7 +15,7 @@ security advisory feature:
 **https://github.com/nalama1/pantryvision/security/advisories/new**
 
 Alternatively, you can reach the maintainer directly at
-**<SECURITY_CONTACT_EMAIL>**.
+**acujilem@espol.edu.ec**.
 
 Please include:
 
