@@ -90,14 +90,14 @@ Resources:
       ParentId: !GetAtt ListApi.RootResourceId
       PathPart: list-products
 
-  # API Gateway Method: GET /list-products (TEMPORARY: auth disabled for testing)
+  # API Gateway Method: GET /list-products with IAM authorization
   ListProductsGetMethod:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref ListApi
       ResourceId: !Ref ListProductsResource
       HttpMethod: GET
-      AuthorizationType: NONE
+      AuthorizationType: AWS_IAM
       Integration:
         Type: AWS_PROXY
         IntegrationHttpMethod: POST

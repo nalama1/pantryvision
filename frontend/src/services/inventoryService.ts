@@ -2,6 +2,7 @@
  * Inventory service for retrieving saved products.
  * Calls the list-products API endpoint to fetch the full inventory with presigned image URLs.
  */
+import { signedFetch } from './signedFetch';
 
 export interface InventoryProduct {
   productId: string;
@@ -31,9 +32,7 @@ export class ListProductsError extends Error {
 /**
  * Retrieves the full list of saved products from the inventory.
  *
- * NOTE (IAM Auth / AWS Signature V4):
- * The API Gateway endpoint uses AWS_IAM authorization in production.
- * Currently set to NONE for local testing.
+ * Signed with AWS Signature V4 via Cognito Identity Pool temporary credentials (see signedFetch.ts)
  */
 export async function listProducts(): Promise<InventoryProduct[]> {
   const apiEndpoint = import.meta.env.VITE_LIST_API_ENDPOINT;
@@ -42,7 +41,7 @@ export async function listProducts(): Promise<InventoryProduct[]> {
     throw new Error('API endpoint not configured. Set VITE_LIST_API_ENDPOINT environment variable.');
   }
 
-  const response = await fetch(`${apiEndpoint}/list-products`, {
+  const response = await signedFetch(`${apiEndpoint}/list-products`, {
     method: 'GET',
   });
 

@@ -75,14 +75,14 @@ Resources:
       ParentId: !GetAtt UploadApi.RootResourceId
       PathPart: upload-url
 
-  # API Gateway Method: POST /upload-url (TEMPORARY: auth disabled for testing)
+  # API Gateway Method: POST /upload-url with IAM authorization
   UploadUrlPostMethod:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref UploadApi
       ResourceId: !Ref UploadUrlResource
       HttpMethod: POST
-      AuthorizationType: NONE
+      AuthorizationType: AWS_IAM
       Integration:
         Type: AWS_PROXY
         IntegrationHttpMethod: POST

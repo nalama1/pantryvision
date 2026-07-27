@@ -96,14 +96,14 @@ Resources:
       ParentId: !GetAtt ExtractApi.RootResourceId
       PathPart: extract-product-data
 
-  # API Gateway Method: POST /extract-product-data (TEMPORARY: auth disabled for testing)
+  # API Gateway Method: POST /extract-product-data with IAM authorization
   ExtractProductDataPostMethod:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref ExtractApi
       ResourceId: !Ref ExtractProductDataResource
       HttpMethod: POST
-      AuthorizationType: NONE
+      AuthorizationType: AWS_IAM
       Integration:
         Type: AWS_PROXY
         IntegrationHttpMethod: POST

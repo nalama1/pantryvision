@@ -11,6 +11,8 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@aws-sdk/client-cognito-identity": "3.1095.0",
+    "aws4fetch": "1.0.20",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

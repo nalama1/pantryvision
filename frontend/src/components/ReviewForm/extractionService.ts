@@ -1,4 +1,5 @@
 import type { ExtractionResult } from './types';
+import { signedFetch } from '../../services/signedFetch';
 
 /** Error codes returned by the extraction API */
 export type ExtractionErrorCode =
@@ -24,11 +25,7 @@ export class ExtractionServiceError extends Error {
  * The backend Lambda retrieves the image from S3 and invokes Bedrock
  * to extract structured product data.
  *
- * NOTE (IAM Auth / AWS Signature V4):
- * The API Gateway endpoint uses AWS_IAM authorization. In production, the fetch
- * call below must be signed with AWS Signature V4.
- *
- * TODO: Replace raw fetch with Amplify API call once Amplify Auth is configured.
+ * Signed with AWS Signature V4 via Cognito Identity Pool temporary credentials (see signedFetch.ts)
  */
 export async function requestExtraction(objectKey: string): Promise<ExtractionResult> {
   const apiEndpoint = import.meta.env.VITE_EXTRACT_API_ENDPOINT;
@@ -37,7 +34,7 @@ export async function requestExtraction(objectKey: string): Promise<ExtractionRe
     throw new Error('API endpoint not configured. Set VITE_EXTRACT_API_ENDPOINT environment variable.');
   }
 
-  const response = await fetch(`${apiEndpoint}/extract-product-data`, {
+  const response = await signedFetch(`${apiEndpoint}/extract-product-data`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ objectKey }),

@@ -76,14 +76,14 @@ Resources:
       ParentId: !GetAtt SaveApi.RootResourceId
       PathPart: save-product
 
-  # API Gateway Method: POST /save-product (TEMPORARY: auth disabled for testing)
+  # API Gateway Method: POST /save-product with IAM authorization
   SaveProductPostMethod:
     Type: AWS::ApiGateway::Method
     Properties:
       RestApiId: !Ref SaveApi
       ResourceId: !Ref SaveProductResource
       HttpMethod: POST
-      AuthorizationType: NONE
+      AuthorizationType: AWS_IAM
       Integration:
         Type: AWS_PROXY
         IntegrationHttpMethod: POST

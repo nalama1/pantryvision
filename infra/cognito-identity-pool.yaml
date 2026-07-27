@@ -1,0 +1,81 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  PantryVision - Cognito Identity Pool for unauthenticated (anonymous) access.
+  Provides visitors with temporary, scoped AWS credentials to invoke the
+  PantryVision API Gateway endpoints (AWS_IAM authorization) without requiring
+  a login/signup flow. This is a hackathon-appropriate alternative to a full
+  Cognito User Pool: credentials are short-lived and scoped to execute-api:Invoke
+  only, never exposed as long-term secrets in the frontend.
+
+Parameters:
+  UploadApiId:
+    Type: String
+    Description: API Gateway REST API ID for the upload-product-photo API (pantryvision-upload-api).
+
+  ExtractApiId:
+    Type: String
+    Description: API Gateway REST API ID for the extract-product-data API (pantryvision-extract-api).
+
+  SaveApiId:
+    Type: String
+    Description: API Gateway REST API ID for the save-product API (pantryvision-save-api).
+
+  ListApiId:
+    Type: String
+    Description: API Gateway REST API ID for the list-products API (pantryvision-list-api).
+
+Resources:
+  # Identity Pool - allows unauthenticated (guest) access only
+  PantryVisionIdentityPool:
+    Type: AWS::Cognito::IdentityPool
+    Properties:
+      IdentityPoolName: pantryvision_identity_pool
+      AllowUnauthenticatedIdentities: true
+
+  # IAM Role assumed by unauthenticated (guest) visitors
+  UnauthenticatedRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: pantryvision-unauthenticated-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: cognito-identity.amazonaws.com
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                "cognito-identity.amazonaws.com:aud": !Ref PantryVisionIdentityPool
+              "ForAnyValue:StringLike":
+                "cognito-identity.amazonaws.com:amr": unauthenticated
+      Policies:
+        - PolicyName: execute-api-invoke-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - execute-api:Invoke
+                Resource:
+                  - !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${UploadApiId}/*/POST/upload-url"
+                  - !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ExtractApiId}/*/POST/extract-product-data"
+                  - !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${SaveApiId}/*/POST/save-product"
+                  - !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ListApiId}/*/GET/list-products"
+
+  # Attach the unauthenticated role to the Identity Pool
+  IdentityPoolRoleAttachment:
+    Type: AWS::Cognito::IdentityPoolRoleAttachment
+    Properties:
+      IdentityPoolId: !Ref PantryVisionIdentityPool
+      Roles:
+        unauthenticated: !GetAtt UnauthenticatedRole.Arn
+
+Outputs:
+  IdentityPoolId:
+    Description: Cognito Identity Pool ID (used by the frontend to obtain temporary credentials)
+    Value: !Ref PantryVisionIdentityPool
+
+  UnauthenticatedRoleArn:
+    Description: ARN of the IAM role assumed by unauthenticated visitors
+    Value: !GetAtt UnauthenticatedRole.Arn

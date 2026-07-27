@@ -2,6 +2,7 @@
  * Upload service for the PhotoUploader component.
  * Handles presigned URL requests and direct S3 uploads with progress tracking.
  */
+import { signedFetch } from '../../services/signedFetch';
 
 export interface PresignedUrlResponse {
   uploadUrl: string;
@@ -27,15 +28,7 @@ export class UploadServiceError extends Error {
  * The backend generates a unique S3 object key and returns a time-limited URL
  * that allows direct upload without exposing AWS credentials.
  *
- * NOTE (IAM Auth / AWS Signature V4):
- * The API Gateway endpoint uses AWS_IAM authorization. In production, the fetch
- * call below must be signed with AWS Signature V4. When using AWS Amplify, this
- * is handled automatically via `Amplify.API.post(...)` which signs requests using
- * the authenticated user's credentials from `@aws-amplify/auth`.
- *
- * TODO: Replace raw fetch with Amplify API call once Amplify Auth is configured:
- *   import { post } from 'aws-amplify/api';
- *   const response = await post({ apiName: 'uploadApi', path: '/upload-url', options: { body } });
+ * Signed with AWS Signature V4 via Cognito Identity Pool temporary credentials (see signedFetch.ts)
  */
 export async function requestPresignedUrl(
   contentType: string,
@@ -47,7 +40,7 @@ export async function requestPresignedUrl(
     throw new Error('API endpoint not configured. Set VITE_API_ENDPOINT environment variable.');
   }
 
-  const response = await fetch(`${apiEndpoint}/upload-url`, {
+  const response = await signedFetch(`${apiEndpoint}/upload-url`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ contentType, fileExtension }),

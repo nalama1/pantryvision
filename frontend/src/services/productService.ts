@@ -2,6 +2,7 @@
  * Product service for saving confirmed products to the inventory.
  * Calls the save-product API endpoint to persist product data in DynamoDB.
  */
+import { signedFetch } from './signedFetch';
 
 export interface SaveProductRequest {
   productName: string;
@@ -45,11 +46,7 @@ export class SaveProductError extends Error {
 /**
  * Saves a confirmed product to the inventory via the save-product Lambda.
  *
- * NOTE (IAM Auth / AWS Signature V4):
- * The API Gateway endpoint uses AWS_IAM authorization in production.
- * Currently set to NONE for local testing.
- *
- * TODO: Replace raw fetch with Amplify API call once Amplify Auth is configured.
+ * Signed with AWS Signature V4 via Cognito Identity Pool temporary credentials (see signedFetch.ts)
  */
 export async function saveProduct(request: SaveProductRequest): Promise<SaveProductResponse> {
   const apiEndpoint = import.meta.env.VITE_SAVE_API_ENDPOINT;
@@ -58,7 +55,7 @@ export async function saveProduct(request: SaveProductRequest): Promise<SaveProd
     throw new Error('API endpoint not configured. Set VITE_SAVE_API_ENDPOINT environment variable.');
   }
 
-  const response = await fetch(`${apiEndpoint}/save-product`, {
+  const response = await signedFetch(`${apiEndpoint}/save-product`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(request),
