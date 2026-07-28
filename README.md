@@ -35,6 +35,7 @@ There is no record of what was purchased, when, and when it expires. This leads 
 - **Review & Confirm** — Editable form with confidence indicators before saving
 - **Inventory Dashboard** — View, filter (Expired / Expiring Soon / Good), and browse saved products with images
 - **Expiration Alerts** — Daily automated email (Amazon EventBridge + SES) listing products expiring within 7 days or already expired, with a clean HTML summary
+  - *Note: Amazon SES operates in sandbox mode for this demo (the default for new AWS accounts), which restricts delivery to pre-verified addresses only. The feature is fully functional and tested end-to-end — see the demo video for a live example of the alert email. In production, SES production access would be requested to enable delivery to any recipient.*
 
 <p align="right"><a href="#top">⬆️ Back to top</a></p>
 
