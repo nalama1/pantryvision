@@ -43,6 +43,9 @@ cors.json
 *.swo
 *~
 
+# === Kiro local settings ===
+.kiro/settings/mcp.json
+
 # === OS ===
 .DS_Store
 Thumbs.db
