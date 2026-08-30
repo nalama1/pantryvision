@@ -155,3 +155,21 @@
     font-size: var(--font-size-2xl);
   }
 }
+
+
+/* Inventory (My Pantry) uses the full viewport width so cards fill the
+   available horizontal space, instead of the 720px reading-width used by
+   the upload/review flow. Applied via a modifier so only the inventory
+   view is affected. */
+.app-main--full {
+  max-width: none;
+  padding-left: var(--space-6);
+  padding-right: var(--space-6);
+}
+
+@media (min-width: 768px) {
+  .app-main--full {
+    padding-left: var(--space-8);
+    padding-right: var(--space-8);
+  }
+}

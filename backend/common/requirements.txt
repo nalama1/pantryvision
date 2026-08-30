@@ -1,0 +1,8 @@
+# boto3 is provided by the Lambda Python 3.12 runtime; listed here only for local dev/test parity
+boto3>=1.34.0,<2.0.0
+
+# Test dependencies
+# responses.py is a pure module (no AWS calls), so pytest is the only hard requirement here.
+# hypothesis is kept for parity with the other backend test suites.
+pytest>=8.0.0,<9.0.0
+hypothesis>=6.100.0,<7.0.0

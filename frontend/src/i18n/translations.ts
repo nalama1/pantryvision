@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Translation dictionary for PantryVision UI strings.
  * Plain object-based i18n (no external library) — organized by component/section.
  * English values match the exact existing copy in the code to avoid regressions;
@@ -59,6 +59,28 @@ export const translations = {
       cancel: 'Cancel',
       confirm: 'Confirm',
     },
+    editForm: {
+      title: 'Edit Product',
+      productNameLabel: 'Product Name *',
+      brandLabel: 'Brand',
+      presentationLabel: 'Presentation',
+      expirationDateLabel: 'Expiration Date',
+      save: 'Save changes',
+      saving: 'Saving…',
+      cancel: 'Cancel',
+      productNameRequired: 'Product name is required.',
+      productNameTooLong: 'Product name must be 200 characters or fewer.',
+      updateError: 'Could not update the product. Please try again.',
+      notFoundError: 'This product no longer exists.',
+    },
+    deleteConfirmation: {
+      title: 'Delete product',
+      message: 'Are you sure you want to delete "{name}"? This will remove it from your pantry.',
+      confirm: 'Delete',
+      cancel: 'Cancel',
+      deleting: 'Deleting…',
+      error: 'The product could not be deleted. Please try again.',
+    },
     saving: {
       message: 'Saving product to inventory...',
       dismiss: 'Dismiss',
@@ -82,6 +104,15 @@ export const translations = {
       unnamedProduct: 'Unnamed product',
       expiresLabel: 'Expires: {date}',
       noImageAlt: 'No image available',
+      edit: 'Edit',
+      delete: 'Delete',
+      editProductLabel: 'Edit {name}',
+      deleteProductLabel: 'Delete {name}',
+      editSuccess: 'Product "{name}" updated',
+      deleteSuccess: 'Product "{name}" deleted',
+    },
+    toast: {
+      dismiss: 'Dismiss notification',
     },
   },
   es: {
@@ -137,6 +168,28 @@ export const translations = {
       cancel: 'Cancelar',
       confirm: 'Confirmar',
     },
+    editForm: {
+      title: 'Editar producto',
+      productNameLabel: 'Nombre del producto *',
+      brandLabel: 'Marca',
+      presentationLabel: 'Presentación',
+      expirationDateLabel: 'Fecha de vencimiento',
+      save: 'Guardar cambios',
+      saving: 'Guardando…',
+      cancel: 'Cancelar',
+      productNameRequired: 'El nombre del producto es obligatorio.',
+      productNameTooLong: 'El nombre del producto debe tener 200 caracteres o menos.',
+      updateError: 'No se pudo actualizar el producto. Por favor intenta de nuevo.',
+      notFoundError: 'Este producto ya no existe.',
+    },
+    deleteConfirmation: {
+      title: 'Eliminar producto',
+      message: '¿Seguro que quieres eliminar "{name}"? Se quitará de tu despensa.',
+      confirm: 'Eliminar',
+      cancel: 'Cancelar',
+      deleting: 'Eliminando…',
+      error: 'No se pudo eliminar el producto. Por favor intenta de nuevo.',
+    },
     saving: {
       message: 'Guardando producto en la despensa...',
       dismiss: 'Cerrar',
@@ -160,6 +213,15 @@ export const translations = {
       unnamedProduct: 'Producto sin nombre',
       expiresLabel: 'Vence: {date}',
       noImageAlt: 'Sin imagen disponible',
+      edit: 'Editar',
+      delete: 'Eliminar',
+      editProductLabel: 'Editar {name}',
+      deleteProductLabel: 'Eliminar {name}',
+      editSuccess: 'Se actualizó el producto "{name}"',
+      deleteSuccess: 'Se eliminó el producto "{name}"',
+    },
+    toast: {
+      dismiss: 'Descartar notificación',
     },
   },
 } as const;

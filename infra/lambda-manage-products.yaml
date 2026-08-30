@@ -1,0 +1,264 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  PantryVision - Manage Products stack (update + soft delete).
+  Defines the update-product and delete-product Lambda functions, their
+  least-privilege IAM execution roles, and a single REST API
+  (pantryvision-manage-api) exposing /update-product and /delete-product.
+  Soft delete uses a conditional DynamoDB UpdateItem, so neither Lambda needs
+  DeleteItem or any S3 permission.
+
+Parameters:
+  TableName:
+    Type: String
+    Default: pantryvision-products
+    Description: Name of the DynamoDB table for product inventory storage.
+
+  StageName:
+    Type: String
+    Default: prod
+    Description: API Gateway deployment stage name.
+
+Resources:
+  # IAM Execution Role for update-product - minimum required permissions
+  UpdateProductExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: update-product-execution-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        # Basic Lambda execution (CloudWatch Logs)
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: dynamodb-update-item-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              # Update only SETs the four editable fields; not-found is detected
+              # via a conditional expression, so no GetItem/DeleteItem is needed.
+              - Effect: Allow
+                Action:
+                  - dynamodb:UpdateItem
+                Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TableName}"
+
+  # IAM Execution Role for delete-product - minimum required permissions
+  DeleteProductExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: delete-product-execution-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        # Basic Lambda execution (CloudWatch Logs)
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: dynamodb-update-item-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              # Soft delete is a conditional UpdateItem (SET deleted/deletedAt),
+              # so DeleteItem is intentionally NOT granted and the S3 image is
+              # provably untouched (no S3 permission at all).
+              - Effect: Allow
+                Action:
+                  - dynamodb:UpdateItem
+                Resource: !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TableName}"
+
+  # Lambda Function: update-product
+  UpdateProductFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: update-product
+      Runtime: python3.12
+      Handler: handler.lambda_handler
+      MemorySize: 128
+      Timeout: 10
+      Role: !GetAtt UpdateProductExecutionRole.Arn
+      Code:
+        S3Bucket: !Sub "pantryvision-deployment-${AWS::AccountId}"
+        S3Key: backend/update-product.zip
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TableName
+
+  # Lambda Function: delete-product (soft delete)
+  DeleteProductFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: delete-product
+      Runtime: python3.12
+      Handler: handler.lambda_handler
+      MemorySize: 128
+      Timeout: 10
+      Role: !GetAtt DeleteProductExecutionRole.Arn
+      Code:
+        S3Bucket: !Sub "pantryvision-deployment-${AWS::AccountId}"
+        S3Key: backend/delete-product.zip
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TableName
+
+  # API Gateway REST API (Option A: one new RestApi for both manage endpoints)
+  ManageApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: pantryvision-manage-api
+      Description: API for PantryVision manage products (update + soft delete)
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  # API Gateway Resource: /update-product
+  UpdateProductResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref ManageApi
+      ParentId: !GetAtt ManageApi.RootResourceId
+      PathPart: update-product
+
+  # API Gateway Resource: /delete-product
+  DeleteProductResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref ManageApi
+      ParentId: !GetAtt ManageApi.RootResourceId
+      PathPart: delete-product
+
+  # API Gateway Method: POST /update-product with IAM authorization
+  UpdateProductPostMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ManageApi
+      ResourceId: !Ref UpdateProductResource
+      HttpMethod: POST
+      AuthorizationType: AWS_IAM
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${UpdateProductFunction.Arn}/invocations"
+
+  # CORS: OPTIONS method for /update-product preflight requests
+  UpdateProductOptionsMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ManageApi
+      ResourceId: !Ref UpdateProductResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ""
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+
+  # API Gateway Method: POST /delete-product with IAM authorization
+  DeleteProductPostMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ManageApi
+      ResourceId: !Ref DeleteProductResource
+      HttpMethod: POST
+      AuthorizationType: AWS_IAM
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteProductFunction.Arn}/invocations"
+
+  # CORS: OPTIONS method for /delete-product preflight requests
+  DeleteProductOptionsMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ManageApi
+      ResourceId: !Ref DeleteProductResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Methods: "'POST,OPTIONS'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+            ResponseTemplates:
+              application/json: ""
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+
+  # Lambda permission for API Gateway invocation of update-product
+  UpdateFunctionApiGatewayPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref UpdateProductFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ManageApi}/*/POST/update-product"
+
+  # Lambda permission for API Gateway invocation of delete-product
+  DeleteFunctionApiGatewayPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref DeleteProductFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ManageApi}/*/POST/delete-product"
+
+  # API Gateway Deployment (depends on all four methods)
+  ApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - UpdateProductPostMethod
+      - UpdateProductOptionsMethod
+      - DeleteProductPostMethod
+      - DeleteProductOptionsMethod
+    Properties:
+      RestApiId: !Ref ManageApi
+      StageName: !Ref StageName
+
+Outputs:
+  ManageApiEndpoint:
+    Description: >
+      Base API Gateway endpoint URL for the manage API. The frontend appends
+      /update-product and /delete-product (matches VITE_MANAGE_API_ENDPOINT usage).
+    Value: !Sub "https://${ManageApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}"
+
+  ManageApiId:
+    Description: ID of the manage REST API (used to extend the Cognito invoke policy)
+    Value: !Ref ManageApi
+
+  UpdateProductFunctionArn:
+    Description: ARN of the update-product Lambda function
+    Value: !GetAtt UpdateProductFunction.Arn
+
+  DeleteProductFunctionArn:
+    Description: ARN of the delete-product Lambda function
+    Value: !GetAtt DeleteProductFunction.Arn

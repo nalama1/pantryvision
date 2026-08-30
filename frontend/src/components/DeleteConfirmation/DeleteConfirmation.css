@@ -1,0 +1,88 @@
+/* ==========================================================================
+   DeleteConfirmation Component Styles — Accessible modal dialog
+   ========================================================================== */
+
+/* Overlay backdrop — dims the inventory behind the modal */
+.delete-confirmation__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background: rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.2s ease forwards;
+}
+
+/* Dialog card */
+.delete-confirmation {
+  background: var(--color-white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-8);
+  max-width: 440px;
+  width: 100%;
+}
+
+.delete-confirmation__title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-gray-900);
+  margin: 0 0 var(--space-4);
+}
+
+.delete-confirmation__message {
+  font-size: var(--font-size-base);
+  color: var(--color-gray-700);
+  margin: 0 0 var(--space-6);
+  line-height: 1.5;
+}
+
+/* Error banner shown when a delete fails or times out */
+.delete-confirmation__error {
+  background: var(--color-error-bg);
+  border-left: 4px solid var(--color-error);
+  color: var(--color-error);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-6);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.delete-confirmation__actions {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: flex-end;
+}
+
+/* Minimal danger variant for the destructive confirm action.
+   No shared .btn--danger exists yet in global.css, so it is defined here. */
+.btn--danger {
+  background: var(--color-error);
+  color: var(--color-white);
+  border-color: var(--color-error);
+  font-weight: var(--font-weight-bold);
+}
+
+.btn--danger:hover:not(:disabled) {
+  filter: brightness(0.93);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .delete-confirmation {
+    padding: var(--space-6);
+  }
+
+  .delete-confirmation__actions {
+    flex-direction: column;
+  }
+
+  .delete-confirmation__actions .btn {
+    width: 100%;
+  }
+}

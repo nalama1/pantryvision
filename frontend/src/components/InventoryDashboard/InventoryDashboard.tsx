@@ -1,9 +1,12 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+﻿import { useState, useEffect, useCallback, useMemo } from 'react';
 import './InventoryDashboard.css';
 import { listProducts } from '../../services/inventoryService';
 import type { InventoryProduct } from '../../services/inventoryService';
 import { getExpirationStatus, type ExpirationStatus } from './expirationStatus';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { EditForm } from '../EditForm';
+import { DeleteConfirmation } from '../DeleteConfirmation';
+import { Toast, type ToastVariant } from '../Toast';
 
 export function InventoryDashboard() {
   const { t } = useLanguage();
@@ -11,6 +14,13 @@ export function InventoryDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<ExpirationStatus | null>(null);
+  // Overlay state: which product (if any) is currently being edited or deleted.
+  // Only one is non-null at a time in practice, since each is triggered by a distinct button.
+  const [editingProduct, setEditingProduct] = useState<InventoryProduct | null>(null);
+  const [deletingProduct, setDeletingProduct] = useState<InventoryProduct | null>(null);
+  // Success feedback shown after an edit/delete; auto-dismisses via the Toast component.
+  // Holds the message plus a color variant ('info' blue for edit, 'error' red for delete).
+  const [toast, setToast] = useState<{ message: string; variant: ToastVariant } | null>(null);
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
@@ -56,6 +66,46 @@ export function InventoryDashboard() {
     setActiveFilter((current) => (current === status ? null : status));
   }, []);
 
+  // On edit success, merge the updated fields onto the existing item so the card
+  // reflects the changes without a full reload (Req 4.5), then close the edit overlay.
+  //
+  // Why merge instead of replace: `imageUrl` is a DERIVED presigned URL computed only
+  // by the list-products Lambda; it is not a stored attribute, so the update-product
+  // response never carries it. Spreading `...item` then `...updated` lets any field the
+  // backend genuinely returns win (including the preserved imageKey), while imageUrl
+  // falls back to the existing presigned URL. Editing never changes the image, so the
+  // previously-presigned URL is still valid and the card keeps showing the photo.
+  const handleEditSuccess = useCallback((updated: InventoryProduct) => {
+    setProducts((current) =>
+      current.map((item) =>
+        item.productId === updated.productId
+          ? { ...item, ...updated, imageUrl: updated.imageUrl ?? item.imageUrl }
+          : item,
+      ),
+    );
+    setEditingProduct(null);
+    setToast({
+      message: t('inventoryDashboard.editSuccess', { name: updated.productName }),
+      variant: 'info',
+    });
+  }, [t]);
+
+  // On delete success, remove the item from the list so the card disappears (Req 5.7),
+  // then close the delete overlay.
+  const handleDeleteConfirmed = useCallback((productId: string) => {
+    let deletedName = '';
+    setProducts((current) => {
+      // Capture the name of the item being removed so the toast can reference it.
+      deletedName = current.find((item) => item.productId === productId)?.productName ?? '';
+      return current.filter((item) => item.productId !== productId);
+    });
+    setDeletingProduct(null);
+    setToast({
+      message: t('inventoryDashboard.deleteSuccess', { name: deletedName }),
+      variant: 'error',
+    });
+  }, [t]);
+
   if (loading) {
     return (
       <div className="inventory-dashboard__loading" data-testid="inventory-loading">
@@ -75,6 +125,17 @@ export function InventoryDashboard() {
       </div>
     );
   }
+
+  // Shown inline next to the "Good" filter button (see the filters row below).
+  // Auto-dismisses after ~6s via the Toast component's timer.
+  const toastEl = toast && (
+    <Toast
+      message={toast.message}
+      variant={toast.variant}
+      durationMs={6000}
+      onDismiss={() => setToast(null)}
+    />
+  );
 
   if (products.length === 0) {
     return (
@@ -115,6 +176,7 @@ export function InventoryDashboard() {
         >
           {t('inventoryDashboard.filterGood')} ({counts.normal})
         </button>
+        {toastEl}
       </div>
 
       {filteredProducts.length === 0 ? (
@@ -124,9 +186,33 @@ export function InventoryDashboard() {
       ) : (
         <div className="inventory-dashboard__grid" data-testid="inventory-grid">
           {filteredProducts.map(({ product, status }) => (
-            <ProductCard key={product.productId} product={product} status={status} t={t} />
+            <ProductCard
+              key={product.productId}
+              product={product}
+              status={status}
+              t={t}
+              onEdit={() => setEditingProduct(product)}
+              onDelete={() => setDeletingProduct(product)}
+            />
           ))}
         </div>
+      )}
+
+      {/* Overlays live in the main "grid" return so they only render once the
+          inventory is loaded. Only one is non-null at a time in practice. */}
+      {editingProduct && (
+        <EditForm
+          product={editingProduct}
+          onSuccess={handleEditSuccess}
+          onCancel={() => setEditingProduct(null)}
+        />
+      )}
+      {deletingProduct && (
+        <DeleteConfirmation
+          product={deletingProduct}
+          onConfirmed={handleDeleteConfirmed}
+          onCancel={() => setDeletingProduct(null)}
+        />
       )}
     </div>
   );
@@ -136,12 +222,18 @@ function ProductCard({
   product,
   status,
   t,
+  onEdit,
+  onDelete,
 }: {
   product: InventoryProduct;
   status: ExpirationStatus;
   t: (key: string, params?: Record<string, string | number>) => string;
+  onEdit: () => void;
+  onDelete: () => void;
 }) {
   const cardClass = `inventory-card inventory-card--${status}`;
+  // Used for the accessible names so unnamed products still get a sensible label.
+  const displayName = product.productName || t('inventoryDashboard.unnamedProduct');
 
   return (
     <div className={cardClass} data-testid="product-card">
@@ -168,7 +260,7 @@ function ProductCard({
         )}
       </div>
       <div className="inventory-card__content">
-        <h3 className="inventory-card__name">{product.productName || t('inventoryDashboard.unnamedProduct')}</h3>
+        <h3 className="inventory-card__name">{displayName}</h3>
         {product.brand && <p className="inventory-card__brand">{product.brand}</p>}
         {product.presentation && <p className="inventory-card__presentation">{product.presentation}</p>}
         {product.expirationDate && (
@@ -177,6 +269,28 @@ function ProductCard({
         <p className="inventory-card__quantity">
           {product.quantity} {product.unit}
         </p>
+        <div className="inventory-card__actions">
+          {/* Real buttons so they are keyboard-focusable by default; the accessible
+              name includes the product name to distinguish cards (Req 4.1, 5.1). */}
+          <button
+            type="button"
+            className="btn btn--secondary inventory-card__action"
+            onClick={onEdit}
+            aria-label={t('inventoryDashboard.editProductLabel', { name: displayName })}
+            data-testid="edit-product-btn"
+          >
+            ✏️ {t('inventoryDashboard.edit')}
+          </button>
+          <button
+            type="button"
+            className="btn btn--danger inventory-card__action"
+            onClick={onDelete}
+            aria-label={t('inventoryDashboard.deleteProductLabel', { name: displayName })}
+            data-testid="delete-product-btn"
+          >
+            🗑️ {t('inventoryDashboard.delete')}
+          </button>
+        </div>
       </div>
     </div>
   );

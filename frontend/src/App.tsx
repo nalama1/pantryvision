@@ -143,7 +143,7 @@ function App() {
 
       <NavBar activeView={view} onSelectView={setView} />
 
-      <main className="app-main">
+      <main className={`app-main ${view === 'inventory' ? 'app-main--full' : ''}`}>
         {view === 'upload' && (
           <>
             {appState === 'upload' && (

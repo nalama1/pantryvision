@@ -1,0 +1,7 @@
+# boto3 is provided by the Lambda Python 3.12 runtime; listed here only for local dev/test parity
+boto3>=1.34.0,<2.0.0
+
+# Test dependencies
+pytest>=8.0.0,<9.0.0
+hypothesis>=6.100.0,<7.0.0
+moto[dynamodb]>=5.0.0,<6.0.0

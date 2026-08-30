@@ -4,7 +4,10 @@ import logging
 from datetime import date
 
 import boto3
+from boto3.dynamodb.conditions import Attr
 from botocore.exceptions import ClientError
+
+from common.responses import CORS_HEADERS, build_error_response
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -18,12 +21,6 @@ BUCKET_NAME = os.environ.get("BUCKET_NAME", "pantryvision-product-images")
 table = dynamodb.Table(TABLE_NAME)
 
 PRESIGNED_URL_EXPIRATION_SECONDS = 300
-
-CORS_HEADERS = {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type,Authorization",
-}
 
 
 def lambda_handler(event, context) -> dict:
@@ -48,12 +45,21 @@ def lambda_handler(event, context) -> dict:
 
 def scan_all_products() -> list[dict]:
     """Scans the products table, handling pagination via LastEvaluatedKey."""
+    # Exclude soft-deleted records. Records without the `deleted` attribute
+    # (legacy records written before soft-delete existed) are treated as
+    # not-deleted and still returned, so this stays backward compatible with
+    # no data migration required.
+    filter_expr = Attr("deleted").not_exists() | Attr("deleted").eq(False)
+
     items = []
-    response = table.scan()
+    response = table.scan(FilterExpression=filter_expr)
     items.extend(response.get("Items", []))
 
     while "LastEvaluatedKey" in response:
-        response = table.scan(ExclusiveStartKey=response["LastEvaluatedKey"])
+        response = table.scan(
+            ExclusiveStartKey=response["LastEvaluatedKey"],
+            FilterExpression=filter_expr,
+        )
         items.extend(response.get("Items", []))
 
     return items
@@ -105,19 +111,4 @@ def build_success_response(items: list[dict]) -> dict:
         "statusCode": 200,
         "headers": CORS_HEADERS,
         "body": json.dumps(items, default=str),
-    }
-
-
-def build_error_response(status_code: int, error_code: str, message: str) -> dict:
-    """Constructs an error HTTP response with CORS headers."""
-    log_level = logging.WARNING if status_code < 500 else logging.ERROR
-    logger.log(log_level, "%s: %s", error_code, message)
-
-    return {
-        "statusCode": status_code,
-        "headers": CORS_HEADERS,
-        "body": json.dumps({
-            "error": error_code,
-            "message": message,
-        }),
     }
