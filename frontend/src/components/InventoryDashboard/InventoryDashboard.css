@@ -47,7 +47,9 @@
 }
 
 .inventory-card--normal {
-  border: 2px solid var(--color-primary);
+  /* "Good" cards use a green border to reinforce the fresh/OK status
+     (the --color-primary/--color-success tokens are blue in this theme). */
+  border: 2px solid #16A34A;
 }
 
 .inventory-card__image-wrapper {
@@ -121,6 +123,31 @@
 .inventory-card__quantity {
   font-weight: var(--font-weight-medium);
   color: var(--color-gray-700);
+}
+
+/* Actions row: Edit + Delete controls, side by side under the card content. */
+.inventory-card__actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.inventory-card__action {
+  flex: 1;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+}
+
+/* Danger variant scoped to the card so it renders even before the
+   DeleteConfirmation stylesheet (which also defines .btn--danger) is loaded. */
+.inventory-card__action.btn--danger {
+  background: var(--color-error);
+  color: var(--color-white);
+  border-color: var(--color-error);
+}
+
+.inventory-card__action.btn--danger:hover {
+  filter: brightness(0.93);
 }
 
 /* ==========================================================================
