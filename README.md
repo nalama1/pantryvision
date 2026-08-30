@@ -1,6 +1,10 @@
 <a id="top"></a>
 # 🥫 PantryVision
 
+<p align="center">
+  <a href="README.es.md">🇪🇸 Versión en español</a>
+</p>
+
 A serverless web application for household inventory management. Upload a photo of a product, and a vision AI model extracts the name, brand, presentation, and expiration date. Confirm the data, and the system saves it to your personal inventory with expiration and low-stock alerts.
 
 ## Table of Contents
@@ -34,6 +38,7 @@ There is no record of what was purchased, when, and when it expires. This leads 
 - **Manual Fallback** — If AI cannot read the data, the user can enter it manually
 - **Review & Confirm** — Editable form with confidence indicators before saving
 - **Inventory Dashboard** — View, filter (Expired / Expiring Soon / Good), and browse saved products with images
+- **Edit & Delete (CRUD)** — Update a product's details or remove it from the inventory. Deletion is a *soft delete* (the record is flagged, never physically erased), with an accessible confirmation dialog and inline success feedback
 - **Expiration Alerts** — Daily automated email (Amazon EventBridge + SES) listing products expiring within 7 days or already expired, with a clean HTML summary
   - *Note: Amazon SES operates in sandbox mode for this demo (the default for new AWS accounts), which restricts delivery to pre-verified addresses only. The feature is fully functional and tested end-to-end — see the demo video for a live example of the alert email. In production, SES production access would be requested to enable delivery to any recipient.*
 
@@ -175,7 +180,8 @@ Infrastructure is managed as CloudFormation templates in `/infra`. Deploy in ord
 4. `infra/lambda-extract.yaml` — Extraction Lambda + API Gateway
 5. `infra/lambda-save-product.yaml` — Save Product Lambda + API Gateway
 6. `infra/lambda-list-products.yaml` — List Products Lambda + API Gateway
-7. `infra/cognito-identity-pool.yaml` — Cognito Identity Pool (deployed last, needs the 4 API Gateway IDs as parameters)
+7. `infra/lambda-manage-products.yaml` — Manage Products (update + soft delete) Lambdas + API Gateway
+8. `infra/cognito-identity-pool.yaml` — Cognito Identity Pool (deployed last, needs the 5 API Gateway IDs as parameters)
 
 ```bash
 aws cloudformation deploy --template-file infra/s3-bucket.yaml --stack-name pantryvision-s3-bucket --region <AWS_REGION>
@@ -184,7 +190,8 @@ aws cloudformation deploy --template-file infra/lambda-upload.yaml --stack-name 
 aws cloudformation deploy --template-file infra/lambda-extract.yaml --stack-name pantryvision-lambda-extract --capabilities CAPABILITY_NAMED_IAM --region <AWS_REGION>
 aws cloudformation deploy --template-file infra/lambda-save-product.yaml --stack-name pantryvision-lambda-save --capabilities CAPABILITY_NAMED_IAM --region <AWS_REGION>
 aws cloudformation deploy --template-file infra/lambda-list-products.yaml --stack-name pantryvision-lambda-list --capabilities CAPABILITY_NAMED_IAM --region <AWS_REGION>
-aws cloudformation deploy --template-file infra/cognito-identity-pool.yaml --stack-name pantryvision-cognito-identity --capabilities CAPABILITY_NAMED_IAM --region <AWS_REGION> --parameter-overrides UploadApiId=<UPLOAD_API_ID> ExtractApiId=<EXTRACT_API_ID> SaveApiId=<SAVE_API_ID> ListApiId=<LIST_API_ID>
+aws cloudformation deploy --template-file infra/lambda-manage-products.yaml --stack-name pantryvision-lambda-manage --capabilities CAPABILITY_NAMED_IAM --region <AWS_REGION>
+aws cloudformation deploy --template-file infra/cognito-identity-pool.yaml --stack-name pantryvision-cognito-identity --capabilities CAPABILITY_NAMED_IAM --region <AWS_REGION> --parameter-overrides UploadApiId=<UPLOAD_API_ID> ExtractApiId=<EXTRACT_API_ID> SaveApiId=<SAVE_API_ID> ListApiId=<LIST_API_ID> ManageApiId=<MANAGE_API_ID>
 ```
 
 ### Environment Variables
@@ -196,6 +203,7 @@ VITE_API_ENDPOINT=<API_GATEWAY_UPLOAD_URL>
 VITE_EXTRACT_API_ENDPOINT=<API_GATEWAY_EXTRACT_URL>
 VITE_SAVE_API_ENDPOINT=<API_GATEWAY_SAVE_URL>
 VITE_LIST_API_ENDPOINT=<API_GATEWAY_LIST_URL>
+VITE_MANAGE_API_ENDPOINT=<API_GATEWAY_MANAGE_URL>
 VITE_AWS_REGION=<AWS_REGION>
 VITE_COGNITO_IDENTITY_POOL_ID=<COGNITO_IDENTITY_POOL_ID>
 ```
