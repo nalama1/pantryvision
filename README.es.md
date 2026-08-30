@@ -39,6 +39,7 @@ No existe un registro de qué se compró, cuándo y cuándo caduca. Esto provoca
 - **Alternativa manual** — Si la IA no puede leer los datos, el usuario puede introducirlos manualmente
 - **Revisar y confirmar** — Formulario editable con indicadores de confianza antes de guardar
 - **Panel de inventario** — Consulta, filtra (Caducado / Por caducar / Bien) y navega por los productos guardados con sus imágenes
+- **Vista de tabla** — Un listado tipo hoja de cálculo que complementa las tarjetas: columnas claras (#, caducidad, nombre, marca, presentación, cantidad, estado, activo/inactivo, imagen), un filtro de estado, paginación del lado del cliente (5 / 10 / 20 filas por página con indicador de posición), una casilla opcional para "mostrar inactivos" que incluye los productos con borrado lógico, y un visor de imagen (lightbox) bajo demanda
 - **Editar y eliminar (CRUD)** — Actualiza los datos de un producto o quítalo del inventario. La eliminación es un *borrado lógico* (el registro se marca, nunca se borra físicamente), con un diálogo de confirmación accesible y confirmación visual en línea
 - **Alertas de caducidad** — Correo automático diario (Amazon EventBridge + SES) que lista los productos que caducan en un plazo de 7 días o que ya han caducado, con un resumen HTML claro
   - *Nota: Amazon SES opera en modo sandbox para esta demo (la configuración predeterminada para las cuentas nuevas de AWS), lo que restringe el envío únicamente a direcciones verificadas previamente. La funcionalidad es completa y ha sido probada de extremo a extremo — consulta el video de la demo para ver un ejemplo real del correo de alerta. En producción, se solicitaría el acceso a producción de SES para habilitar el envío a cualquier destinatario.*
@@ -271,8 +272,10 @@ PantryVision se construyó usando el flujo de trabajo basado en especificaciones
 │   ├── ai-data-extraction/         -- Amazon Bedrock (Nova Pro) extraction pipeline
 │   ├── save-product-inventory/     -- Save confirmed product data to DynamoDB
 │   ├── inventory-dashboard/        -- List, filter, and display saved products
+│   ├── manage-products/            -- Update + soft-delete products (CRUD)
 │   ├── frontend-ui-redesign/       -- Visual redesign, i18n (ES/EN), UX polish
-│   └── expiration-alerts/          -- Daily EventBridge + SES expiration email
+│   ├── expiration-alerts/          -- Daily EventBridge + SES expiration email
+│   └── product-table-view/         -- Spreadsheet-style table: filter, pagination, image lightbox, show-inactive
 │       (each spec: requirements.md, design.md, tasks.md)
 │
 └── steering/
@@ -285,7 +288,7 @@ PantryVision se construyó usando el flujo de trabajo basado en especificaciones
     └── repository.md           -- Pre-commit checklist & repo exclusion rules
 ```
 
-Seis funcionalidades, seis especificaciones — cada una documentando los criterios de aceptación (formato EARS), el diseño técnico y el desglose de tareas que realmente se ejecutó. Esto mantuvo el contexto del agente de IA consistente desde el primer flujo de carga hasta el rediseño final de la interfaz, sin tener que reexplicar las reglas del proyecto en cada conversación.
+Cada especificación documenta los criterios de aceptación (formato EARS), el diseño técnico y el desglose de tareas que realmente se ejecutó. Esto mantuvo el contexto del agente de IA consistente desde el primer flujo de carga hasta el rediseño final de la interfaz, sin tener que reexplicar las reglas del proyecto en cada conversación.
 
 <p align="right"><a href="#top">⬆️ Volver arriba</a></p>
 

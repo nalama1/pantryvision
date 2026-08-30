@@ -98,7 +98,14 @@ _records = st.lists(_record(), min_size=0, max_size=15,
 # --- Property 5 -------------------------------------------------------------
 
 # Feature: manage-products, Property 5: list-products excludes deleted and includes legacy/undeleted records
-@settings(max_examples=100, suppress_health_check=[HealthCheck.function_scoped_fixture])
+# too_slow is suppressed because the per-example cost comes from the
+# function-scoped moto fixture (recreating the table each example), not from our
+# filter logic; input generation itself is cheap. Without this, the health check
+# fires nondeterministically depending on the Hypothesis seed.
+@settings(
+    max_examples=100,
+    suppress_health_check=[HealthCheck.function_scoped_fixture, HealthCheck.too_slow],
+)
 @given(records=_records)
 def test_list_excludes_deleted_includes_legacy_and_undeleted(handler_module, records):
     """For any mix of legacy (no `deleted`), deleted==False, and deleted==True

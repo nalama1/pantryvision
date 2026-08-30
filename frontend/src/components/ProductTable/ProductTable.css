@@ -1,0 +1,180 @@
+/* ==========================================================================
+   ProductTable Styles — spreadsheet-style inventory view
+   ========================================================================== */
+
+.product-table__state {
+  text-align: center;
+  padding: var(--space-16) var(--space-4);
+}
+
+.product-table__error-text {
+  color: var(--color-error);
+  margin-bottom: var(--space-6);
+}
+
+/* Controls bar: status filters + inactive toggle + page-size selector */
+.product-table__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.product-table__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.product-table__filter {
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-full);
+  background: var(--color-white);
+  color: var(--color-gray-700);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: background var(--transition-base), border-color var(--transition-base);
+}
+
+.product-table__filter--active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.product-table__inactive-toggle,
+.product-table__page-size {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-700);
+}
+
+.product-table__page-size {
+  margin-left: auto;
+}
+
+.product-table__page-size select {
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-md);
+}
+
+/* Horizontal scroll container so the wide table stays usable on narrow screens */
+.product-table__scroll {
+  overflow-x: auto;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  background: var(--color-white);
+}
+
+.product-table__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+
+.product-table__table th,
+.product-table__table td {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  border-bottom: 1px solid var(--color-gray-200);
+  white-space: nowrap;
+}
+
+.product-table__table th {
+  background: var(--color-gray-100);
+  color: var(--color-gray-700);
+  font-weight: var(--font-weight-semibold);
+}
+
+.product-table__table tbody tr:hover {
+  background: var(--color-gray-100);
+}
+
+/* Inactive (soft-deleted) rows are dimmed AND carry a text badge, so the
+   distinction is not conveyed by color/opacity alone (Req 4.4). */
+.product-table__row--inactive {
+  opacity: 0.55;
+}
+
+/* Status pill — text label reinforces the color (not color-only, Req 2.2/3.2) */
+.product-table__status {
+  display: inline-block;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.product-table__status--expired {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+}
+
+.product-table__status--expiring-soon {
+  background: #F3E8FF;
+  color: #8B5CF6;
+}
+
+.product-table__status--normal {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.product-table__badge {
+  display: inline-block;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.product-table__badge--active {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.product-table__badge--inactive {
+  background: var(--color-gray-200);
+  color: var(--color-gray-700);
+}
+
+.product-table__view-btn {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-xs);
+}
+
+.product-table__no-image {
+  color: var(--color-gray-400);
+  font-size: var(--font-size-xs);
+}
+
+/* Pagination footer */
+.product-table__pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+.product-table__position {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+}
+
+.product-table__page-nav {
+  display: flex;
+  gap: var(--space-2);
+}
+
+@media (max-width: 480px) {
+  .product-table__page-size {
+    margin-left: 0;
+  }
+}

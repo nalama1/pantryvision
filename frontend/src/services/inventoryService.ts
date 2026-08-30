@@ -15,6 +15,10 @@ export interface InventoryProduct {
   createdAt: string;
   quantity: number;
   unit: string;
+  // Present (and true) only for inactive/soft-deleted records, which are
+  // returned exclusively when the caller opts in via includeDeleted. Absent or
+  // false means the product is active.
+  deleted?: boolean;
 }
 
 export type ListProductsErrorCode = 'INTERNAL_ERROR' | 'UNKNOWN';
@@ -32,16 +36,25 @@ export class ListProductsError extends Error {
 /**
  * Retrieves the full list of saved products from the inventory.
  *
+ * When `includeDeleted` is true, inactive (soft-deleted) products are returned
+ * alongside active ones via the `?includeDeleted=true` query parameter. The
+ * default (false) preserves the original behavior, so existing callers that
+ * invoke `listProducts()` are unaffected.
+ *
  * Signed with AWS Signature V4 via Cognito Identity Pool temporary credentials (see signedFetch.ts)
  */
-export async function listProducts(): Promise<InventoryProduct[]> {
+export async function listProducts(includeDeleted = false): Promise<InventoryProduct[]> {
   const apiEndpoint = import.meta.env.VITE_LIST_API_ENDPOINT;
 
   if (!apiEndpoint) {
     throw new Error('API endpoint not configured. Set VITE_LIST_API_ENDPOINT environment variable.');
   }
 
-  const response = await signedFetch(`${apiEndpoint}/list-products`, {
+  const url = includeDeleted
+    ? `${apiEndpoint}/list-products?includeDeleted=true`
+    : `${apiEndpoint}/list-products`;
+
+  const response = await signedFetch(url, {
     method: 'GET',
   });
 

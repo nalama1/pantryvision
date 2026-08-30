@@ -39,6 +39,7 @@ There is no record of what was purchased, when, and when it expires. This leads 
 - **Manual Fallback** — If AI cannot read the data, the user can enter it manually
 - **Review & Confirm** — Editable form with confidence indicators before saving
 - **Inventory Dashboard** — View, filter (Expired / Expiring Soon / Good), and browse saved products with images
+- **Table View** — A spreadsheet-style listing of the inventory complementing the cards: sortable-friendly columns (#, expiration, name, brand, presentation, quantity, status, active/inactive, image), a status filter, client-side pagination (5 / 10 / 20 rows per page with a position indicator), an optional "show inactive" toggle to include soft-deleted products, and an on-demand image lightbox
 - **Edit & Delete (CRUD)** — Update a product's details or remove it from the inventory. Deletion is a *soft delete* (the record is flagged, never physically erased), with an accessible confirmation dialog and inline success feedback
 - **Expiration Alerts** — Daily automated email (Amazon EventBridge + SES) listing products expiring within 7 days or already expired, with a clean HTML summary
   - *Note: Amazon SES operates in sandbox mode for this demo (the default for new AWS accounts), which restricts delivery to pre-verified addresses only. The feature is fully functional and tested end-to-end — see the demo video for a live example of the alert email. In production, SES production access would be requested to enable delivery to any recipient.*
@@ -271,8 +272,10 @@ PantryVision was built using [Kiro](https://kiro.dev/)'s spec-driven workflow. E
 │   ├── ai-data-extraction/         -- Amazon Bedrock (Nova Pro) extraction pipeline
 │   ├── save-product-inventory/     -- Save confirmed product data to DynamoDB
 │   ├── inventory-dashboard/        -- List, filter, and display saved products
+│   ├── manage-products/            -- Update + soft-delete products (CRUD)
 │   ├── frontend-ui-redesign/       -- Visual redesign, i18n (ES/EN), UX polish
-│   └── expiration-alerts/          -- Daily EventBridge + SES expiration email
+│   ├── expiration-alerts/          -- Daily EventBridge + SES expiration email
+│   └── product-table-view/         -- Spreadsheet-style table: filter, pagination, image lightbox, show-inactive
 │       (each spec: requirements.md, design.md, tasks.md)
 │
 └── steering/
@@ -285,7 +288,7 @@ PantryVision was built using [Kiro](https://kiro.dev/)'s spec-driven workflow. E
     └── repository.md           -- Pre-commit checklist & repo exclusion rules
 ```
 
-Six features, six specs — each documenting the acceptance criteria (EARS format), the technical design, and the task breakdown that was actually executed. This kept the AI agent's context consistent from the first upload flow all the way to the final UI redesign, without re-explaining the project's rules in every conversation.
+Each spec documents the acceptance criteria (EARS format), the technical design, and the task breakdown that was actually executed. This kept the AI agent's context consistent from the first upload flow all the way to the final UI redesign, without re-explaining the project's rules in every conversation.
 
 <p align="right"><a href="#top">⬆️ Back to top</a></p>
 

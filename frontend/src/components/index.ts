@@ -7,3 +7,7 @@ export { NavBar } from './NavBar';
 export type { NavBarProps, AppView } from './NavBar';
 export { InventoryDashboard } from './InventoryDashboard';
 export type { ExpirationStatus } from './InventoryDashboard';
+export { ProductTable, paginate } from './ProductTable';
+export type { PageInfo } from './ProductTable';
+export { ImageViewer } from './ImageViewer';
+export type { ImageViewerProps } from './ImageViewer';
