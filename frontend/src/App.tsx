@@ -9,6 +9,7 @@ import { saveProduct } from './services/productService';
 import { NavBar } from './components/NavBar';
 import type { AppView } from './components/NavBar';
 import { InventoryDashboard } from './components/InventoryDashboard';
+import { ProductTable } from './components/ProductTable';
 import { useLanguage } from './i18n/LanguageContext';
 
 type AppState = 'upload' | 'extracting' | 'review' | 'done';
@@ -143,7 +144,7 @@ function App() {
 
       <NavBar activeView={view} onSelectView={setView} />
 
-      <main className={`app-main ${view === 'inventory' ? 'app-main--full' : ''}`}>
+      <main className={`app-main ${view === 'inventory' || view === 'table' ? 'app-main--full' : ''}`}>
         {view === 'upload' && (
           <>
             {appState === 'upload' && (
@@ -239,6 +240,12 @@ function App() {
               </div>
             )}
           </>
+        )}
+
+        {view === 'table' && (
+          <div className="app-section">
+            <ProductTable />
+          </div>
         )}
 
         {view === 'inventory' && (

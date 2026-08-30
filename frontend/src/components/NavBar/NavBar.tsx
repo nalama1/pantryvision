@@ -1,7 +1,7 @@
 import './NavBar.css';
 import { useLanguage } from '../../i18n/LanguageContext';
 
-export type AppView = 'upload' | 'inventory';
+export type AppView = 'upload' | 'table' | 'inventory';
 
 export interface NavBarProps {
   activeView: AppView;
@@ -21,6 +21,15 @@ export function NavBar({ activeView, onSelectView }: NavBarProps) {
         aria-current={activeView === 'upload' ? 'page' : undefined}
       >
         {t('navBar.upload')}
+      </button>
+      <button
+        type="button"
+        className={`nav-bar__tab ${activeView === 'table' ? 'nav-bar__tab--active' : ''}`}
+        onClick={() => onSelectView('table')}
+        data-testid="nav-table-btn"
+        aria-current={activeView === 'table' ? 'page' : undefined}
+      >
+        {t('navBar.table')}
       </button>
       <button
         type="button"
