@@ -22,6 +22,7 @@ Una aplicación web serverless para la gestión del inventario del hogar. Sube u
 - [☁️ Alineación con AWS Well-Architected](#aws-well-architected-alignment)
 - [🏆 Sobre este proyecto](#about-this-project)
 - [📄 Licencia](#license)
+- [🙌 Créditos](#credits)
 
 <a id="problem"></a>
 ## 🧩 Problema
@@ -356,5 +357,12 @@ notificaciones push, escaneo de códigos de barras y analítica avanzada del inv
 ## 📄 Licencia
 
 MIT
+
+<p align="right"><a href="#top">⬆️ Volver arriba</a></p>
+
+<a id="credits"></a>
+## 🙌 Créditos
+
+Este proyecto se originó en el Hackathon de Inteligencia Artificial con Kiro (organizado por Código Facilito con el apoyo de AWS), que se llevó a cabo hasta el 27 de julio de 2026. Desde entonces, el desarrollo ha continuado de forma independiente.
 
 <p align="right"><a href="#top">⬆️ Volver arriba</a></p>

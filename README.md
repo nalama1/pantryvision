@@ -22,6 +22,7 @@ A serverless web application for household inventory management. Upload a photo 
 - [☁️ AWS Well-Architected Alignment](#aws-well-architected-alignment)
 - [🏆 About This Project](#about-this-project)
 - [📄 License](#license)
+- [🙌 Credits](#credits)
 
 <a id="problem"></a>
 ## 🧩 Problem
@@ -356,5 +357,12 @@ notifications, barcode scanning, and advanced inventory analytics.
 ## 📄 License
 
 MIT
+
+<p align="right"><a href="#top">⬆️ Back to top</a></p>
+
+<a id="credits"></a>
+## 🙌 Credits
+
+This project originated at the AI Hackathon with Kiro (organized by Código Facilito with support from AWS), which ran through July 27, 2026. Development has continued independently since then.
 
 <p align="right"><a href="#top">⬆️ Back to top</a></p>
