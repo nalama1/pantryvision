@@ -6,6 +6,7 @@ import { getExpirationStatus, type ExpirationStatus } from '../InventoryDashboar
 import { useLanguage } from '../../i18n/LanguageContext';
 import { ImageViewer } from '../ImageViewer';
 import { paginate } from './pagination';
+import { buildCsv, downloadCsv, buildExportFilename, type ExportLabels } from './exportCsv';
 
 type PageSize = 5 | 10 | 20;
 const PAGE_SIZE_OPTIONS: PageSize[] = [5, 10, 20];
@@ -39,6 +40,9 @@ export function ProductTable() {
   const [pageSize, setPageSize] = useState<PageSize>(DEFAULT_PAGE_SIZE);
   const [currentPage, setCurrentPage] = useState(1);
   const [viewerProduct, setViewerProduct] = useState<InventoryProduct | null>(null);
+  // While true, the table renders every filtered row (ignoring pagination) so
+  // window.print() captures the whole set, not just the current page.
+  const [isPrinting, setIsPrinting] = useState(false);
 
   // Refs to each row's "View" button so focus can be restored to the one that
   // opened the lightbox after it closes (Req 7.8).
@@ -85,8 +89,8 @@ export function ProductTable() {
   );
 
   const pageRows = useMemo(
-    () => filteredRows.slice(pageInfo.startIndex, pageInfo.endIndex),
-    [filteredRows, pageInfo.startIndex, pageInfo.endIndex],
+    () => (isPrinting ? filteredRows : filteredRows.slice(pageInfo.startIndex, pageInfo.endIndex)),
+    [isPrinting, filteredRows, pageInfo.startIndex, pageInfo.endIndex],
   );
 
   const handleToggleInactive = useCallback(() => {
@@ -125,6 +129,44 @@ export function ProductTable() {
       viewButtonRefs.current.get(openerId)?.focus();
       viewerOpenerRef.current = null;
     }
+  }, []);
+
+  // Export/print operate on the full FILTERED set (respecting status filter and
+  // the inactive toggle), not just the current page, so the user gets the whole
+  // view they are looking at. The image column is omitted (it is an action).
+  const handleExportCsv = useCallback(() => {
+    const labels: ExportLabels = {
+      number: '#',
+      expires: t('productTable.colExpires'),
+      name: t('productTable.colName'),
+      brand: t('productTable.colBrand'),
+      presentation: t('productTable.colPresentation'),
+      quantity: t('productTable.colQuantity'),
+      status: t('productTable.colStatus'),
+      active: t('productTable.colActive'),
+      statusExpired: t('productTable.statusExpired'),
+      statusExpiringSoon: t('productTable.statusExpiringSoon'),
+      statusGood: t('productTable.statusGood'),
+      activeLabel: t('productTable.active'),
+      inactiveLabel: t('productTable.inactive'),
+      unnamedProduct: t('productTable.unnamedProduct'),
+    };
+    const csv = buildCsv(filteredRows, labels);
+    downloadCsv(csv, buildExportFilename());
+  }, [filteredRows, t]);
+
+  const handlePrint = useCallback(() => {
+    // window.print() only captures what is in the DOM, which is the current
+    // page. To print the WHOLE filtered set, temporarily render every row, print,
+    // then restore the previous pagination. Two rAFs ensure React has committed
+    // the expanded rows to the DOM before the (blocking) print dialog opens.
+    setIsPrinting(true);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        window.print();
+        setIsPrinting(false);
+      });
+    });
   }, []);
 
   if (loading) {
@@ -187,6 +229,27 @@ export function ProductTable() {
           {t('productTable.showInactive')}
         </label>
 
+        <div className="product-table__actions">
+          <button
+            type="button"
+            className="btn btn--secondary product-table__action-btn"
+            onClick={handleExportCsv}
+            disabled={filteredRows.length === 0}
+            data-testid="product-table-export-btn"
+          >
+            {t('productTable.exportExcel')}
+          </button>
+          <button
+            type="button"
+            className="btn btn--secondary product-table__action-btn"
+            onClick={handlePrint}
+            disabled={filteredRows.length === 0}
+            data-testid="product-table-print-btn"
+          >
+            {t('productTable.print')}
+          </button>
+        </div>
+
         <label className="product-table__page-size">
           {t('productTable.pageSizeLabel')}
           <select
@@ -212,13 +275,12 @@ export function ProductTable() {
               <thead>
                 <tr>
                   <th scope="col">#</th>
+                  <th scope="col">{t('productTable.colStatus')}</th>
                   <th scope="col">{t('productTable.colExpires')}</th>
                   <th scope="col">{t('productTable.colName')}</th>
                   <th scope="col">{t('productTable.colBrand')}</th>
                   <th scope="col">{t('productTable.colPresentation')}</th>
                   <th scope="col">{t('productTable.colQuantity')}</th>
-                  <th scope="col">{t('productTable.colStatus')}</th>
-                  <th scope="col">{t('productTable.colActive')}</th>
                   <th scope="col">{t('productTable.colImage')}</th>
                 </tr>
               </thead>
@@ -226,7 +288,9 @@ export function ProductTable() {
                 {pageRows.map(({ product, status }, index) => {
                   const isInactive = product.deleted === true;
                   const displayName = product.productName || t('productTable.unnamedProduct');
-                  const rowNumber = pageInfo.startIndex + index + 1; // Req 2.3
+                  // When printing we render all rows, so number from 1; otherwise
+                  // continue numbering across pages using the page's start offset.
+                  const rowNumber = (isPrinting ? 0 : pageInfo.startIndex) + index + 1; // Req 2.3
                   const hasImage = Boolean(product.imageUrl);
 
                   return (
@@ -236,27 +300,23 @@ export function ProductTable() {
                       data-testid="product-table-row"
                     >
                       <td>{rowNumber}</td>
-                      <td>{product.expirationDate || t('productTable.noDate')}</td>
-                      <td>{displayName}</td>
-                      <td>{product.brand}</td>
-                      <td>{product.presentation}</td>
-                      <td>{product.quantity} {product.unit}</td>
                       <td>
                         <span className={`product-table__status product-table__status--${status}`}>
                           {t(STATUS_LABEL_KEY[status])}
                         </span>
                       </td>
+                      <td>{product.expirationDate || t('productTable.noDate')}</td>
                       <td>
-                        {isInactive ? (
+                        {displayName}
+                        {isInactive && (
                           <span className="product-table__badge product-table__badge--inactive">
                             {t('productTable.inactive')}
                           </span>
-                        ) : (
-                          <span className="product-table__badge product-table__badge--active">
-                            {t('productTable.active')}
-                          </span>
                         )}
                       </td>
+                      <td>{product.brand}</td>
+                      <td>{product.presentation}</td>
+                      <td>{product.quantity} {product.unit}</td>
                       <td>
                         {hasImage ? (
                           <button

@@ -21,15 +21,13 @@ Una aplicación web serverless para la gestión del inventario del hogar. Sube u
 - [🔒 Seguridad](#security)
 - [☁️ Alineación con AWS Well-Architected](#aws-well-architected-alignment)
 - [🏆 Sobre este proyecto](#about-this-project)
-- [📄 Licencia](#license)
 - [🙌 Créditos](#credits)
+- [📄 Licencia](#license)
 
 <a id="problem"></a>
 ## 🧩 Problema
 
 No existe un registro de qué se compró, cuándo y cuándo caduca. Esto provoca desperdicio por productos vencidos y compras duplicadas o tardías.
-
-<p align="right"><a href="#top">⬆️ Volver arriba</a></p>
 
 <a id="features"></a>
 ## ✨ Características
@@ -43,8 +41,6 @@ No existe un registro de qué se compró, cuándo y cuándo caduca. Esto provoca
 - **Editar y eliminar (CRUD)** — Actualiza los datos de un producto o quítalo del inventario. La eliminación es un *borrado lógico* (el registro se marca, nunca se borra físicamente), con un diálogo de confirmación accesible y confirmación visual en línea
 - **Alertas de caducidad** — Correo automático diario (Amazon EventBridge + SES) que lista los productos que caducan en un plazo de 7 días o que ya han caducado, con un resumen HTML claro
   - *Nota: Amazon SES opera en modo sandbox para esta demo (la configuración predeterminada para las cuentas nuevas de AWS), lo que restringe el envío únicamente a direcciones verificadas previamente. La funcionalidad es completa y ha sido probada de extremo a extremo — consulta el video de la demo para ver un ejemplo real del correo de alerta. En producción, se solicitaría el acceso a producción de SES para habilitar el envío a cualquier destinatario.*
-
-<p align="right"><a href="#top">⬆️ Volver arriba</a></p>
 
 <a id="architecture"></a>
 ## 🏗️ Arquitectura
@@ -99,8 +95,6 @@ sin autenticación — no requiere inicio de sesión).
 | Amazon CloudWatch | Monitoreo y registro de logs |
 | Amazon Cognito | Identity Pool para credenciales de AWS temporales y acotadas (firma de solicitudes SigV4) |
 
-<p align="right"><a href="#top">⬆️ Volver arriba</a></p>
-
 <a id="tech-stack"></a>
 ## 🛠️ Stack tecnológico
 
@@ -112,8 +106,6 @@ sin autenticación — no requiere inicio de sesión).
 | Modelo de IA | Amazon Bedrock (Amazon Nova Pro) |
 | Almacenamiento | Amazon S3 (privado) |
 | Infraestructura | CloudFormation |
-
-<p align="right"><a href="#top">⬆️ Volver arriba</a></p>
 
 <a id="built-with"></a>
 ## 🛠️ Construido con
@@ -131,8 +123,6 @@ sin autenticación — no requiere inicio de sesión).
 [![Vite](https://img.shields.io/badge/Vite-6.0-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-<p align="right"><a href="#top">⬆️ Volver arriba</a></p>
-
 <a id="project-structure"></a>
 ## 📁 Estructura del proyecto
 
@@ -141,8 +131,6 @@ sin autenticación — no requiere inicio de sesión).
 /backend    → Lambda functions (Python 3.12)
 /infra      → CloudFormation templates
 ```
-
-<p align="right"><a href="#top">⬆️ Volver arriba</a></p>
 
 <a id="getting-started"></a>
 ## 🚀 Primeros pasos
@@ -219,8 +207,6 @@ VITE_COGNITO_IDENTITY_POOL_ID=<COGNITO_IDENTITY_POOL_ID>
 | `BEDROCK_TIMEOUT` | Tiempo de espera en segundos para la invocación de la IA |
 | `TABLE_NAME` | Tabla de DynamoDB para el inventario de productos |
 
-<p align="right"><a href="#top">⬆️ Volver arriba</a></p>
-
 <a id="aws-cli-reference"></a>
 ## 📋 Referencia de AWS CLI y flujo de despliegue
 
@@ -258,8 +244,6 @@ Referencia rápida de los comandos de AWS CLI más utilizados al construir y ope
 
 **Punto clave**: los pasos 4-6 son totalmente automáticos — Amplify Hosting vigila la rama `main` del repositorio de GitHub, por lo que ningún comando de AWS CLI dispara directamente el despliegue; simplemente ocurre como consecuencia del `git push`.
 
-<p align="right"><a href="#top">⬆️ Volver arriba</a></p>
-
 <a id="internal-documentation"></a>
 ## 🗂️ Documentación interna (.kiro/)
 
@@ -290,8 +274,6 @@ PantryVision se construyó usando el flujo de trabajo basado en especificaciones
 
 Cada especificación documenta los criterios de aceptación (formato EARS), el diseño técnico y el desglose de tareas que realmente se ejecutó. Esto mantuvo el contexto del agente de IA consistente desde el primer flujo de carga hasta el rediseño final de la interfaz, sin tener que reexplicar las reglas del proyecto en cada conversación.
 
-<p align="right"><a href="#top">⬆️ Volver arriba</a></p>
-
 <a id="security"></a>
 ## 🔒 Seguridad
 
@@ -301,8 +283,6 @@ Cada especificación documenta los criterios de aceptación (formato EARS), el d
 - Datos cifrados en reposo y en tránsito
 - Principio de mínimo privilegio aplicado a todos los roles de IAM
 - Los visitantes anónimos reciben credenciales de AWS temporales y acotadas a través de un Cognito Identity Pool (sin claves de larga duración expuestas en el código del frontend)
-
-<p align="right"><a href="#top">⬆️ Volver arriba</a></p>
 
 <a id="aws-well-architected-alignment"></a>
 ## ☁️ Alineación con AWS Well-Architected
@@ -315,8 +295,6 @@ Cada especificación documenta los criterios de aceptación (formato EARS), el d
 | Eficiencia del rendimiento | Imagen reducida antes del procesamiento con IA, tiempos de espera de Lambda configurados por función, timeout de Bedrock en 30s |
 | Excelencia operativa | Infraestructura como código (CloudFormation), registro estructurado en CloudWatch con métricas de duración y tokens |
 | Sostenibilidad | Serverless escala a cero (sin recursos inactivos), imagen redimensionada antes de la IA para reducir el cómputo, cargas directas a S3 que evitan Lambda, salida de tokens limitada |
-
-<p align="right"><a href="#top">⬆️ Volver arriba</a></p>
 
 <a id="about-this-project"></a>
 ## 🏆 Sobre este proyecto
@@ -354,18 +332,14 @@ Este proyecto se creó como un MVP para un hackathon y representa una prueba de
 concepto funcional. Las mejoras futuras podrían incluir autenticación,
 notificaciones push, escaneo de códigos de barras y analítica avanzada del inventario.
 
-<p align="right"><a href="#top">⬆️ Volver arriba</a></p>
+<a id="credits"></a>
+## 🙌 Créditos
+
+Este proyecto se originó en el Hackathon de Inteligencia Artificial con Kiro (organizado por Código Facilito con el apoyo de AWS), que se llevó a cabo hasta el 27 de julio de 2026. Desde entonces, el desarrollo ha continuado de forma independiente.
 
 <a id="license"></a>
 ## 📄 Licencia
 
 MIT
-
-<p align="right"><a href="#top">⬆️ Volver arriba</a></p>
-
-<a id="credits"></a>
-## 🙌 Créditos
-
-Este proyecto se originó en el Hackathon de Inteligencia Artificial con Kiro (organizado por Código Facilito con el apoyo de AWS), que se llevó a cabo hasta el 27 de julio de 2026. Desde entonces, el desarrollo ha continuado de forma independiente.
 
 <p align="right"><a href="#top">⬆️ Volver arriba</a></p>

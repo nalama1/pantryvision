@@ -21,15 +21,13 @@ A serverless web application for household inventory management. Upload a photo 
 - [🔒 Security](#security)
 - [☁️ AWS Well-Architected Alignment](#aws-well-architected-alignment)
 - [🏆 About This Project](#about-this-project)
-- [📄 License](#license)
 - [🙌 Credits](#credits)
+- [📄 License](#license)
 
 <a id="problem"></a>
 ## 🧩 Problem
 
 There is no record of what was purchased, when, and when it expires. This leads to waste from expired products and duplicate or late purchases.
-
-<p align="right"><a href="#top">⬆️ Back to top</a></p>
 
 <a id="features"></a>
 ## ✨ Features
@@ -43,8 +41,6 @@ There is no record of what was purchased, when, and when it expires. This leads 
 - **Edit & Delete (CRUD)** — Update a product's details or remove it from the inventory. Deletion is a *soft delete* (the record is flagged, never physically erased), with an accessible confirmation dialog and inline success feedback
 - **Expiration Alerts** — Daily automated email (Amazon EventBridge + SES) listing products expiring within 7 days or already expired, with a clean HTML summary
   - *Note: Amazon SES operates in sandbox mode for this demo (the default for new AWS accounts), which restricts delivery to pre-verified addresses only. The feature is fully functional and tested end-to-end — see the demo video for a live example of the alert email. In production, SES production access would be requested to enable delivery to any recipient.*
-
-<p align="right"><a href="#top">⬆️ Back to top</a></p>
 
 <a id="architecture"></a>
 ## 🏗️ Architecture
@@ -99,8 +95,6 @@ access — no login required).
 | Amazon CloudWatch | Monitoring and logging |
 | Amazon Cognito | Identity Pool for temporary, scoped AWS credentials (SigV4 request signing) |
 
-<p align="right"><a href="#top">⬆️ Back to top</a></p>
-
 <a id="tech-stack"></a>
 ## 🛠️ Tech Stack
 
@@ -112,8 +106,6 @@ access — no login required).
 | AI Model | Amazon Bedrock (Amazon Nova Pro) |
 | Storage | Amazon S3 (private) |
 | Infrastructure | CloudFormation |
-
-<p align="right"><a href="#top">⬆️ Back to top</a></p>
 
 <a id="built-with"></a>
 ## 🛠️ Built With
@@ -131,8 +123,6 @@ access — no login required).
 [![Vite](https://img.shields.io/badge/Vite-6.0-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
-<p align="right"><a href="#top">⬆️ Back to top</a></p>
-
 <a id="project-structure"></a>
 ## 📁 Project Structure
 
@@ -141,8 +131,6 @@ access — no login required).
 /backend    → Lambda functions (Python 3.12)
 /infra      → CloudFormation templates
 ```
-
-<p align="right"><a href="#top">⬆️ Back to top</a></p>
 
 <a id="getting-started"></a>
 ## 🚀 Getting Started
@@ -219,8 +207,6 @@ VITE_COGNITO_IDENTITY_POOL_ID=<COGNITO_IDENTITY_POOL_ID>
 | `BEDROCK_TIMEOUT` | Timeout in seconds for AI invocation |
 | `TABLE_NAME` | DynamoDB table for product inventory |
 
-<p align="right"><a href="#top">⬆️ Back to top</a></p>
-
 <a id="aws-cli-reference"></a>
 ## 📋 AWS CLI Reference & Deployment Flow
 
@@ -258,8 +244,6 @@ Quick reference for the AWS CLI commands used most often while building and oper
 
 **Key point**: steps 4-6 are fully automatic — Amplify Hosting watches the GitHub repo's `main` branch, so no AWS CLI command directly triggers the deployment; it simply happens as a consequence of the `git push`.
 
-<p align="right"><a href="#top">⬆️ Back to top</a></p>
-
 <a id="internal-documentation"></a>
 ## 🗂️ Internal Documentation (.kiro/)
 
@@ -290,8 +274,6 @@ PantryVision was built using [Kiro](https://kiro.dev/)'s spec-driven workflow. E
 
 Each spec documents the acceptance criteria (EARS format), the technical design, and the task breakdown that was actually executed. This kept the AI agent's context consistent from the first upload flow all the way to the final UI redesign, without re-explaining the project's rules in every conversation.
 
-<p align="right"><a href="#top">⬆️ Back to top</a></p>
-
 <a id="security"></a>
 ## 🔒 Security
 
@@ -301,8 +283,6 @@ Each spec documents the acceptance criteria (EARS format), the technical design,
 - Data encrypted at rest and in transit
 - Principle of Least Privilege applied to all IAM roles
 - Anonymous visitors receive short-lived, scoped AWS credentials via a Cognito Identity Pool (no long-term keys exposed in frontend code)
-
-<p align="right"><a href="#top">⬆️ Back to top</a></p>
 
 <a id="aws-well-architected-alignment"></a>
 ## ☁️ AWS Well-Architected Alignment
@@ -315,8 +295,6 @@ Each spec documents the acceptance criteria (EARS format), the technical design,
 | Performance Efficiency | Image downscaled before AI processing, Lambda timeouts configured per function, Bedrock timeout at 30s |
 | Operational Excellence | Infrastructure as code (CloudFormation), structured CloudWatch logging with duration and token metrics |
 | Sustainability | Serverless scales to zero (no idle resources), image resized before AI to reduce compute, direct-to-S3 uploads bypass Lambda, capped token output |
-
-<p align="right"><a href="#top">⬆️ Back to top</a></p>
 
 <a id="about-this-project"></a>
 ## 🏆 About This Project
@@ -354,18 +332,14 @@ This project was created as a hackathon MVP and represents a functional
 proof of concept. Future improvements may include authentication, push
 notifications, barcode scanning, and advanced inventory analytics.
 
-<p align="right"><a href="#top">⬆️ Back to top</a></p>
+<a id="credits"></a>
+## 🙌 Credits
+
+This project originated at the AI Hackathon with Kiro (organized by Código Facilito with support from AWS), which ran through July 27, 2026. Development has continued independently since then.
 
 <a id="license"></a>
 ## 📄 License
 
 MIT
-
-<p align="right"><a href="#top">⬆️ Back to top</a></p>
-
-<a id="credits"></a>
-## 🙌 Credits
-
-This project originated at the AI Hackathon with Kiro (organized by Código Facilito with support from AWS), which ran through July 27, 2026. Development has continued independently since then.
 
 <p align="right"><a href="#top">⬆️ Back to top</a></p>
